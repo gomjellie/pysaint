@@ -1,9 +1,15 @@
 # pysaint
 
-## setup
+## setup (for library developer)
 
 ```sh
+python ./setup.py build
 python ./setup.py install
+```
+
+## setup (for end user)
+```sh
+pip install pysaint
 ```
 ## Usage
 
