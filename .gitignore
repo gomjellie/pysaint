@@ -107,4 +107,4 @@ venv.bak/
 .idea/
 
 # jupyter
-.ipynb
+*.ipynb
