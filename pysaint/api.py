@@ -11,16 +11,17 @@ from collections import defaultdict
 
 def liberal_arts(year_range=[], semesters=[]):
     """
+    TODO: validate parameters!
     교양필수 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
-    list or tuple
-    example )
+    :type year_range: list or tuple
+    example input )
             [2013, 2014, 2015, 2016, 2017, 2018]
             or
             (2017, 2018)
     :param semesters:
-    list or tuple
-    example )
+    :type semesters: list or tuple
+    example input )
             ['1 학기', '여름학기', '2 학기', '겨울학기']
             or
             ('1 학기')
