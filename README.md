@@ -1,5 +1,7 @@
 # pysaint
 
+saint.ssu.ac.kr 에서 수강신청 과목정보를 실시간으로 가져오는 라이브러리 입니다.
+
 ## setup (for library developer)
 
 ```sh
@@ -14,36 +16,18 @@ pip install pysaint
 ## Usage
 
 ```python
-from pysaint import Saint
-from pysaint import utils
-import copy
+import pysaint
 
-saint = Saint()
+res = pysaint.get('전공', ['2018'], ['2 학기'])
+print(res)
 
-def get_whole_course(year, semester):
-    print('{} {}'.format(year, semester))
-    saint.select_year('2017')
-    saint.select_semester('1 학기')
-    major_map = saint.get_major_map()
-    course_map = copy.deepcopy(major_map)
+res = pysaint.get('교양필수', range(2015, 2017), ('1 학기', '여름학기', '2 학기', '겨울학기'))
+print(res)
 
-    for college in major_map:
-        for faculty in major_map[college]:
-            course_map[college][faculty] = {key: [] for key in major_map[college][faculty]}
+res = pysaint.get('교양선택', (2016, ), ('1 학기', ))
+print(res)
 
-    for college in major_map:
-        for faculty in major_map[college]:
-            for major in major_map[college][faculty]:
-                print('{} {} {}'.format(college, faculty, major))
-                course_map[college][faculty][major] = saint.select_on_major(college, faculty, major)
-
-    return course_map
-
-
-for year in range(2016, 2011, -1):
-    for semester in ['1 학기', '여름학기', '2 학기', '겨울학기']:
-        course_bunch = get_whole_course(year, semester)
-        utils.save_pickle('./pickles', '{}-{}-전공'.format(year, semester), course_bunch)
+pysaint.utils.save_json('./json/', '{}-{}-전공'.format('2016', '1 학기'), res)
 
 
 ```
