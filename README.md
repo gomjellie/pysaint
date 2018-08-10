@@ -27,7 +27,7 @@ print(res)
 res = pysaint.get('교양선택', (2016, ), ('1 학기', ))
 print(res)
 
-pysaint.utils.save_json('./json/', '{}-{}-전공'.format('2016', '1 학기'), res)
+pysaint.save_json('./json/', '{}-{}-전공'.format('2016', '1 학기'), res)
 
 
 ```
