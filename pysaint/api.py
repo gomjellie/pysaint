@@ -353,7 +353,7 @@ def _selective_liberal(year_range=[], semesters=[], **kwargs):
     return ret
 
 
-def cyber(year_range=[], semesters=[], **kwargs):
+def _cyber(year_range=[], semesters=[], **kwargs):
     """
     TODO:
     시간나면 만들기
