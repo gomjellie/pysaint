@@ -4,12 +4,38 @@
 
 """
 
-from pysaint import Saint
+from .saint import Saint
 import copy
-from collections import defaultdict
 
 
-def liberal_arts(year_range=[], semesters=[]):
+def get(course_type, year_range, semesters, **kwargs):
+    """
+
+    :param course_type:
+    :type course_type: str
+    example )
+            '교양필수'
+            '전공'
+            '교양선택'
+    :param year_range:
+    :type year_range: list or tuple
+    :param semesters:
+    :type semesters: list or tuple
+    :return:
+    """
+    if course_type == '교양필수':
+        return _liberal_arts(year_range=year_range, semesters=semesters, **kwargs)
+    elif course_type == '전공':
+        pass
+    elif course_type == '교양선택':
+        pass
+    else:
+        raise Exception("Unexpected param course_type {} \n".format(
+            course_type
+        ))
+
+
+def _liberal_arts(year_range=[], semesters=[], **kwargs):
     """
     TODO: validate parameters!
     교양필수 과목들을 학기 단위로 묶어서 반환한다.
@@ -87,7 +113,7 @@ def liberal_arts(year_range=[], semesters=[]):
     return ret
 
 
-def major(year_range=[], semesters=[]):
+def _major(year_range=[], semesters=[], **kwargs):
     """
     전공 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
@@ -95,8 +121,37 @@ def major(year_range=[], semesters=[]):
     :return:
     """
 
+    ret = {year: {} for year in year_range}
+    saint = Saint()
 
-def selective_liberal(year_range=[], semesters=[]):
+    def get_whole_course(year, semester):
+        print('{} {}'.format(year, semester))
+        saint.select_year(year)
+        saint.select_semester(semester)
+        major_map = saint.get_major_map()
+        course_map = copy.deepcopy(major_map)
+
+        for college in major_map:
+            for faculty in major_map[college]:
+                course_map[college][faculty] = {key: [] for key in major_map[college][faculty]}
+
+        for college in major_map:
+            for faculty in major_map[college]:
+                for major in major_map[college][faculty]:
+                    print('{} {} {}'.format(college, faculty, major))
+                    course_map[college][faculty][major] = saint.select_on_major(college, faculty, major)
+
+        return course_map
+
+    for year in year_range:
+        for semester in semesters:
+            course_bunch = get_whole_course(year, semester)
+            ret[year][semester] = course_bunch
+
+    return ret
+
+
+def selective_liberal(year_range=[], semesters=[], **kwargs):
     """
     교양선택 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
@@ -105,7 +160,7 @@ def selective_liberal(year_range=[], semesters=[]):
     """
 
 
-def cyber(year_range=[], semesters=[]):
+def cyber(year_range=[], semesters=[], **kwargs):
     """
     TODO:
     시간나면 만들기

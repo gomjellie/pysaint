@@ -5,7 +5,7 @@ import os
 
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
-VERSION = '1.2'
+VERSION = '1.3'
 
 
 def get_requirements(filename):
