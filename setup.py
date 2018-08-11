@@ -5,7 +5,7 @@ import os
 
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
-VERSION = '1.4.3'
+VERSION = '1.4.31'
 
 
 def get_requirements(filename):
@@ -21,6 +21,7 @@ setup(
     version=VERSION,
     description='Python module for saint.ssu.ac.kr',
     long_description=open(os.path.join(ROOT, 'README.md')).read(),
+    long_description_content_type='text/markdown',
     author='gomjellie',
     author_email='gomjellie@gmail.com',
     url='https://github.com/gomjellie/pysaint',
