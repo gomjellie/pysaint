@@ -34,18 +34,18 @@ def get(course_type, year_range, semesters, **kwargs):
             '전공'
             '교양선택'
     :param year_range:
-    :type year_range: list or tuple
+    :type year_range: list or tuple or range
     :param semesters:
     :type semesters: list or tuple
     :return: dict
     """
 
-    if type(year_range) not in (tuple, list):
-        raise ValueError("wrong parameter year_range {}\n"
-                         "expected tuple type or list type but got {} type".format(year_range, type(year_range)))
+    if type(year_range) not in (tuple, list, range):
+        raise ValueError("get() got wrong arguments year_range: {}\n"
+                         "expected tuple type or list, or range type but got {} type".format(year_range, type(year_range)))
 
     if type(semesters) not in (tuple, list):
-        raise ValueError("wrong parameter semesters {}\n"
+        raise ValueError("get() got wrong arguments semesters: {}\n"
                          "expected tuple type or list type but got {} type".format(semesters, type(semesters)))
 
     reformed_year_range = []
@@ -53,7 +53,7 @@ def get(course_type, year_range, semesters, **kwargs):
         if 2000 < int(year) < 2018:
             pass
         else:
-            raise ValueError("wrong parameter year_range {}\n"
+            raise ValueError("get() got wrong arguments year_range: {}\n"
                              "expected to be in year range(2000, 2020) but got {}".format(year_range, int(year)))
         reformed_year_range.append("{}".format(year))
 
@@ -64,7 +64,8 @@ def get(course_type, year_range, semesters, **kwargs):
     elif course_type == '교양선택':
         return _selective_liberal(year_range=reformed_year_range, semesters=semesters, **kwargs)
     else:
-        raise Exception("Unexpected param course_type {} \n".format(course_type))
+        raise ValueError("get() got wrong arguments course_type: {} \n"
+                         "expected to get '교양필수', '전공', '교양선택'".format(course_type))
 
 
 def _liberal_arts(year_range=[], semesters=[], **kwargs):
