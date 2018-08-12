@@ -25,8 +25,7 @@ def get(course_type, year_range, semesters, **kwargs):
         >>> res = pysaint.get('교양선택', (2016, 2017, 2018), ('1 학기', ))
         >>> print(res)
 
-    TODO: year_range 가 (2015, 2016, 2017)로 들어오는경우와 ('2015', '2016', '2017')로 들어오는 경우 리턴하는 딕셔너리의 키들이 다른 문제해결
-    TODO: validate parameters
+    TODO: add log option to decide silent or not
 
     :param course_type:
     :type course_type: str
@@ -35,26 +34,42 @@ def get(course_type, year_range, semesters, **kwargs):
             '전공'
             '교양선택'
     :param year_range:
-    :type year_range: list or tuple
+    :type year_range: list or tuple or range
     :param semesters:
     :type semesters: list or tuple
     :return: dict
     """
+
+    if type(year_range) not in (tuple, list, range):
+        raise ValueError("get() got wrong arguments year_range: {}\n"
+                         "expected tuple type or list, or range type but got {} type".format(year_range, type(year_range)))
+
+    if type(semesters) not in (tuple, list):
+        raise ValueError("get() got wrong arguments semesters: {}\n"
+                         "expected tuple type or list type but got {} type".format(semesters, type(semesters)))
+
+    reformed_year_range = []
+    for year in year_range:
+        if 2000 < int(year) < 2018:
+            pass
+        else:
+            raise ValueError("get() got wrong arguments year_range: {}\n"
+                             "expected to be in year range(2000, 2020) but got {}".format(year_range, int(year)))
+        reformed_year_range.append("{}".format(year))
+
     if course_type == '교양필수':
-        return _liberal_arts(year_range=year_range, semesters=semesters, **kwargs)
+        return _liberal_arts(year_range=reformed_year_range, semesters=semesters, **kwargs)
     elif course_type == '전공':
-        return _major(year_range=year_range, semesters=semesters, **kwargs)
+        return _major(year_range=reformed_year_range, semesters=semesters, **kwargs)
     elif course_type == '교양선택':
-        return _selective_liberal(year_range=year_range, semesters=semesters, **kwargs)
+        return _selective_liberal(year_range=reformed_year_range, semesters=semesters, **kwargs)
     else:
-        raise Exception("Unexpected param course_type {} \n".format(
-            course_type
-        ))
+        raise ValueError("get() got wrong arguments course_type: {} \n"
+                         "expected to get '교양필수', '전공', '교양선택'".format(course_type))
 
 
 def _liberal_arts(year_range=[], semesters=[], **kwargs):
     """
-    TODO: validate parameters!
     교양필수 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
     :type year_range: list or tuple
