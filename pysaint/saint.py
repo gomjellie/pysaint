@@ -33,10 +33,9 @@ class Saint:
     def select_year(self, year):
         """
         :param year:
-        String
-        '2016' '2017' 등등.... 정규식으로 4자리 숫자인지 확인할 필요가 있음
-        :return:
+        :type year: String
         """
+
         dt_year = sap_event_queue.combo_select(self.year_key, year, self.sap_wd_secure_id)
         pg_year = self.sess.post(ECC_URL + self.action, data=dt_year)
 
@@ -44,10 +43,10 @@ class Saint:
         """
         학기를 선택한다.
         :param semester:
-        String
-        '1 학기'
-        :return:
+        :type semester: str
+                example) '1 학기', '여름학기', '2 학기', '겨울학기'
         """
+
         semester_skey = get_semester_skey(self.soup_jar['base'], semester)
         dt_semester = sap_event_queue.combo_select(self.semester_key, semester_skey, self.sap_wd_secure_id)
 
@@ -58,10 +57,10 @@ class Saint:
         """
         학부전공별, 교양필수, 교양선택등 이 있는 탭을 선택한다
         :param section:
-        String
-        '교양필수', '교양선택',
-        :return:
+        :type section: str
+                example) '교양필수', '교양선택',
         """
+
         section_id = get_section_id(self.soup_jar['base'])
         tab_id = get_tab_id(self.soup_jar['base'], section)
         item_index = get_tab_item_index(self.soup_jar['base'], section)
@@ -75,10 +74,10 @@ class Saint:
         """
         단과대학을 선택한다.
         :param college:
-        String
-        인문대학, IT대학, ..
-        :return:
+        :type college: str
+                example) 인문대학, IT대학, ..
         """
+
         college_skey = get_college_skey(self.soup_jar['semester'], college)
         dt_college = sap_event_queue.combo_select(self.college_key, college_skey, self.sap_wd_secure_id)
 
@@ -94,6 +93,7 @@ class Saint:
         철학과, 정보통신전자공학부, ...
         :return:
         """
+
         faculty_skey = get_faculty_skey(self.soup_jar['college'], faculty)
         dt_faculty = sap_event_queue.combo_select(self.faculty_key, faculty_skey, self.sap_wd_secure_id)
 
@@ -104,28 +104,31 @@ class Saint:
         """
         학과 선택과 동시에 search_button을 눌러서 subjects 정보를 받아온다
         :param major:
-        String
+        :type major: str
         '정보통신전자공학부'
-        :return:
-        list
-        subjects
+        :return type: list
         """
+
         major_skey = get_major_skey(self.soup_jar['faculty'], major)
         dt_major = sap_event_queue.combo_select_with_button_press(self.major_key, major_skey, self.search_id, self.sap_wd_secure_id)
         after_search_click = self.sess.post(ECC_URL + self.action, data=dt_major)
 
         self.soup_jar['search'] = BeautifulSoup(after_search_click.text, 'lxml')
         subjects = parse_subjects(self.soup_jar['search'])
+
         return subjects
 
     def _select_uni_faculty_major(self, major):
         """
         학부가 1개밖에 없는 학과를 선택함
         soup_jar['faculty']가 없어서 따로 처리해줌
+
         :param major:
         스포츠학부
-        :return:
+
+        :return type: list
         """
+
         major_skey = get_major_skey(self.soup_jar['college'], major)
         dt_major = sap_event_queue.combo_select_with_button_press(self.major_key, major_skey, self.search_id,
                                                                   self.sap_wd_secure_id)
@@ -133,21 +136,23 @@ class Saint:
 
         self.soup_jar['search'] = BeautifulSoup(after_search_click.text, 'lxml')
         subjects = parse_subjects(self.soup_jar['search'])
+
         return subjects
 
     def _select_search_button(self):
         """
         학부에 학과가 1개일 경우 학과를 선택하지 않고 이 메소드를 호출한다.
         바로 search press event 를 전송해서 정보를 받아 올 수 있다.
-        :return:
-        list
-        subjects
+
+        :return type: list
         """
+
         dt_click_search = sap_event_queue.button_press(self.search_id, self.sap_wd_secure_id)
         after_search_click = self.sess.post(ECC_URL + self.action, data=dt_click_search)
 
         self.soup_jar['search'] = BeautifulSoup(after_search_click.text, 'lxml')
         subjects = parse_subjects(self.soup_jar['search'])
+
         return subjects
 
     def select_on_major(self, college, faculty, major):
@@ -155,14 +160,15 @@ class Saint:
         :param college: 단과대학
         :param faculty: 학부
         :param major: 학과
-        :return:
-        list
-        subjects
+        :return type: list
         """
+
         if major == '':
             return None
+
         self._select_college(college)
         faculties = get_faculties(self.soup_jar['college'])
+
         if len(faculties) == 1:
             # 스포츠학부 같은 경우 단과대학 선택후 학부가 1개라서 바로 학부가 선택됨
             majors = get_majors(self.soup_jar['college'])
@@ -176,6 +182,7 @@ class Saint:
             majors = get_majors(self.soup_jar['faculty'])
         if len(majors) == 1:
             return self._select_search_button()
+
         return self._select_major(major)
 
     def _select_grade(self, grade):
@@ -185,10 +192,13 @@ class Saint:
         CourseParser.select_year()
         CourseParser.select_semester()
         CourseParser.select_course_section()
+
         :param grade:
         '전체학년', '1학년', '2학년', '3학년', '4학년', '5학년'
-        :return:
+
+        :return: soup
         """
+
         grade_id = get_grade_id_from_liberal_arts_tab(self.soup_jar['교양필수'])
         grade_skey = get_grade_skey_from_liberal_arts_tab(self.soup_jar['교양필수'], grade)
         dt_grade = sap_event_queue.combo_select(grade_id, grade_skey, self.sap_wd_secure_id)
@@ -198,6 +208,7 @@ class Saint:
         )
         grade_soup = BeautifulSoup(after_select_grade.text, 'lxml')
         self.soup_jar['grade'] = grade_soup
+
         return grade_soup
 
     def _select_selective_liberal_course(self, course_name):
@@ -209,6 +220,7 @@ class Saint:
         '전체', '*문학과 예술',
         :return:
         """
+
         course_id = get_selective_id(self.soup_jar['교양선택'])
         course_skey = get_selective_course_skey(self.soup_jar['교양선택'], course_name)
         search_id = get_search_id(self.soup_jar['교양선택'])
@@ -216,6 +228,7 @@ class Saint:
             = sap_event_queue.combo_select_with_button_press(course_id, course_skey, search_id, self.sap_wd_secure_id)
         on_selective_liberal_course = self.sess.post(ECC_URL + self.action, data=dt_combo_with_search_button_press)
         self.soup_jar['selective_search'] = BeautifulSoup(on_selective_liberal_course.text, 'lxml')
+
         return parse_subjects(self.soup_jar['selective_search'])
 
     def _select_liberal_arts(self, course_name):
@@ -227,6 +240,7 @@ class Saint:
         '컴퓨팅적사고'
         :return:
         """
+
         search_id = get_search_id(self.soup_jar['grade'])
         course_key = get_liberal_arts_key(self.soup_jar['grade'])
         course_skey = get_liberal_arts_skey(self.soup_jar['grade'], course_name)
@@ -234,6 +248,7 @@ class Saint:
             = sap_event_queue.combo_select_with_button_press(course_key, course_skey, search_id, self.sap_wd_secure_id)
         on_liberal_arts_search_click = self.sess.post(ECC_URL + self.action, data=dt_combo_with_search_button_press)
         self.soup_jar['liberal_search'] = BeautifulSoup(on_liberal_arts_search_click.text, 'lxml')
+
         return parse_subjects(self.soup_jar['liberal_search'])
 
     def select_on_liberal_arts(self, grade, course_name):
@@ -243,10 +258,12 @@ class Saint:
         :return:
         subject lists
         """
+
         self._select_grade(grade)
         courses = get_liberal_arts_courses(self.soup_jar['grade'])
         if course_name not in courses:
             raise Exception()
+
         return self._select_liberal_arts(course_name)
 
     def select_on_selective_liberal(self, course_name):
@@ -274,6 +291,7 @@ class Saint:
             ...
         }
         """
+
         grades = ['전체학년', '1학년', '2학년', '3학년', '4학년', '5학년']
         liberal_arts_map = {grade: {} for grade in grades}
         self.select_course_section('교양필수')
@@ -281,6 +299,7 @@ class Saint:
             self._select_grade(grade)
             majors = get_liberal_arts_courses(self.soup_jar['grade'])
             liberal_arts_map[grade] = majors
+
         return liberal_arts_map
 
     def get_major_map(self):
@@ -302,6 +321,7 @@ class Saint:
             ...
         }
         """
+
         self._select_college('인문대학')
         colleges = get_colleges(self.soup_jar['college'])
         selection_map = {key: {} for key in colleges}
@@ -317,6 +337,7 @@ class Saint:
                     self._select_faculty(faculty)
                     majors = get_majors(self.soup_jar['faculty'])
                 selection_map[college][faculty] = majors
+
         return selection_map
 
     def get_selective_liberal_map(self):
@@ -329,8 +350,10 @@ class Saint:
         선행되야하는 작업:
         :return:
         """
+
         self.select_course_section('교양선택')
         courses = get_selective_courses(self.soup_jar['교양선택'])
+
         return courses
 
 
