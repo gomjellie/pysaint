@@ -50,7 +50,7 @@ def get(course_type, year_range, semesters, **kwargs):
 
     reformed_year_range = []
     for year in year_range:
-        if 2000 < int(year) < 2018:
+        if 2000 < int(year) < 2020:
             pass
         else:
             raise ValueError("get() got wrong arguments year_range: {}\n"

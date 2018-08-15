@@ -1,5 +1,6 @@
 from .constants import SOURCE_URL, ECC_URL, REQUEST_HEADERS, SESSION_HEADERS
 from .parser import *
+from . import sap_event_queue
 import requests
 from bs4 import BeautifulSoup
 from collections import defaultdict
@@ -36,7 +37,7 @@ class Saint:
         '2016' '2017' 등등.... 정규식으로 4자리 숫자인지 확인할 필요가 있음
         :return:
         """
-        dt_year = make_sap_combo_select_event_queue(self.year_key, year, self.sap_wd_secure_id)
+        dt_year = sap_event_queue.combo_select(self.year_key, year, self.sap_wd_secure_id)
         pg_year = self.sess.post(ECC_URL + self.action, data=dt_year)
 
     def select_semester(self, semester):
@@ -48,7 +49,7 @@ class Saint:
         :return:
         """
         semester_skey = get_semester_skey(self.soup_jar['base'], semester)
-        dt_semester = make_sap_combo_select_event_queue(self.semester_key, semester_skey, self.sap_wd_secure_id)
+        dt_semester = sap_event_queue.combo_select(self.semester_key, semester_skey, self.sap_wd_secure_id)
 
         after_semester_click = self.sess.post(ECC_URL + self.action, data=dt_semester)
         self.soup_jar['semester'] = BeautifulSoup(after_semester_click.text, 'lxml')
@@ -64,7 +65,7 @@ class Saint:
         section_id = get_section_id(self.soup_jar['base'])
         tab_id = get_tab_id(self.soup_jar['base'], section)
         item_index = get_tab_item_index(self.soup_jar['base'], section)
-        dt_tab = make_sap_tab_select_event(section_id, tab_id, item_index, self.sap_wd_secure_id)
+        dt_tab = sap_event_queue.tab_select(section_id, tab_id, item_index, self.sap_wd_secure_id)
 
         after_course_section_click = self.sess.post(
             ECC_URL + self.action, data=dt_tab)
@@ -79,7 +80,7 @@ class Saint:
         :return:
         """
         college_skey = get_college_skey(self.soup_jar['semester'], college)
-        dt_college = make_sap_combo_select_event_queue(self.college_key, college_skey, self.sap_wd_secure_id)
+        dt_college = sap_event_queue.combo_select(self.college_key, college_skey, self.sap_wd_secure_id)
 
         after_college_click = self.sess.post(ECC_URL + self.action, data=dt_college)
 
@@ -94,7 +95,7 @@ class Saint:
         :return:
         """
         faculty_skey = get_faculty_skey(self.soup_jar['college'], faculty)
-        dt_faculty = make_sap_combo_select_event_queue(self.faculty_key, faculty_skey, self.sap_wd_secure_id)
+        dt_faculty = sap_event_queue.combo_select(self.faculty_key, faculty_skey, self.sap_wd_secure_id)
 
         after_faculty_click = self.sess.post(ECC_URL + self.action, data=dt_faculty)
         self.soup_jar['faculty'] = BeautifulSoup(after_faculty_click.text, 'lxml')
@@ -110,7 +111,7 @@ class Saint:
         subjects
         """
         major_skey = get_major_skey(self.soup_jar['faculty'], major)
-        dt_major = make_sap_combo_select_with_button_press(self.major_key, major_skey, self.search_id, self.sap_wd_secure_id)
+        dt_major = sap_event_queue.combo_select_with_button_press(self.major_key, major_skey, self.search_id, self.sap_wd_secure_id)
         after_search_click = self.sess.post(ECC_URL + self.action, data=dt_major)
 
         self.soup_jar['search'] = BeautifulSoup(after_search_click.text, 'lxml')
@@ -126,8 +127,8 @@ class Saint:
         :return:
         """
         major_skey = get_major_skey(self.soup_jar['college'], major)
-        dt_major = make_sap_combo_select_with_button_press(self.major_key, major_skey, self.search_id,
-                                                           self.sap_wd_secure_id)
+        dt_major = sap_event_queue.combo_select_with_button_press(self.major_key, major_skey, self.search_id,
+                                                                  self.sap_wd_secure_id)
         after_search_click = self.sess.post(ECC_URL + self.action, data=dt_major)
 
         self.soup_jar['search'] = BeautifulSoup(after_search_click.text, 'lxml')
@@ -142,7 +143,7 @@ class Saint:
         list
         subjects
         """
-        dt_click_search = make_sap_button_press_event_queue(self.search_id, self.sap_wd_secure_id)
+        dt_click_search = sap_event_queue.button_press(self.search_id, self.sap_wd_secure_id)
         after_search_click = self.sess.post(ECC_URL + self.action, data=dt_click_search)
 
         self.soup_jar['search'] = BeautifulSoup(after_search_click.text, 'lxml')
@@ -190,7 +191,7 @@ class Saint:
         """
         grade_id = get_grade_id_from_liberal_arts_tab(self.soup_jar['교양필수'])
         grade_skey = get_grade_skey_from_liberal_arts_tab(self.soup_jar['교양필수'], grade)
-        dt_grade = make_sap_combo_select_event_queue(grade_id, grade_skey, self.sap_wd_secure_id)
+        dt_grade = sap_event_queue.combo_select(grade_id, grade_skey, self.sap_wd_secure_id)
 
         after_select_grade = self.sess.post(
             ECC_URL + self.action, data=dt_grade
@@ -212,7 +213,7 @@ class Saint:
         course_skey = get_selective_course_skey(self.soup_jar['교양선택'], course_name)
         search_id = get_search_id(self.soup_jar['교양선택'])
         dt_combo_with_search_button_press \
-            = make_sap_combo_select_with_button_press(course_id, course_skey, search_id, self.sap_wd_secure_id)
+            = sap_event_queue.combo_select_with_button_press(course_id, course_skey, search_id, self.sap_wd_secure_id)
         on_selective_liberal_course = self.sess.post(ECC_URL + self.action, data=dt_combo_with_search_button_press)
         self.soup_jar['selective_search'] = BeautifulSoup(on_selective_liberal_course.text, 'lxml')
         return parse_subjects(self.soup_jar['selective_search'])
@@ -230,7 +231,7 @@ class Saint:
         course_key = get_liberal_arts_key(self.soup_jar['grade'])
         course_skey = get_liberal_arts_skey(self.soup_jar['grade'], course_name)
         dt_combo_with_search_button_press \
-            = make_sap_combo_select_with_button_press(course_key, course_skey, search_id, self.sap_wd_secure_id)
+            = sap_event_queue.combo_select_with_button_press(course_key, course_skey, search_id, self.sap_wd_secure_id)
         on_liberal_arts_search_click = self.sess.post(ECC_URL + self.action, data=dt_combo_with_search_button_press)
         self.soup_jar['liberal_search'] = BeautifulSoup(on_liberal_arts_search_click.text, 'lxml')
         return parse_subjects(self.soup_jar['liberal_search'])
