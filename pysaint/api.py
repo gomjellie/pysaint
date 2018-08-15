@@ -6,6 +6,7 @@
 
 from .saint import Saint
 import copy
+from tqdm import tqdm
 
 
 def get(course_type, year_range, semesters, **kwargs):
@@ -37,6 +38,7 @@ def get(course_type, year_range, semesters, **kwargs):
     :type year_range: list or tuple or range
     :param semesters:
     :type semesters: list or tuple
+    :param silent: decide progress bar silent or not
     :return: dict
     """
 
@@ -68,7 +70,7 @@ def get(course_type, year_range, semesters, **kwargs):
                          "expected to get '교양필수', '전공', '교양선택'".format(course_type))
 
 
-def _liberal_arts(year_range=[], semesters=[], **kwargs):
+def _liberal_arts(year_range=[], semesters=[], silent=False):
     """
     교양필수 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
@@ -121,7 +123,8 @@ def _liberal_arts(year_range=[], semesters=[], **kwargs):
     saint.select_course_section('교양필수')
 
     def __get_whole_course(year, semester):
-        print('{} {}'.format(year, semester))
+        if not silent:
+            print('{} {}'.format(year, semester))
         saint.select_year(year)
         saint.select_semester(semester)
         liberal_map = saint.get_liberal_arts_map()
@@ -130,9 +133,13 @@ def _liberal_arts(year_range=[], semesters=[], **kwargs):
         for grade in liberal_map:
             course_map[grade] = {course_name: {} for course_name in liberal_map[grade]}
 
-        for grade in liberal_map:
+        pbar = tqdm(liberal_map, disable=silent)
+        for grade in pbar:
+            pbar.set_description("Processing %s" % grade)
             for course_name in liberal_map[grade]:
                 if course_name != '':
+                    if not silent:
+                        print("{} {}".format(grade, course_name))
                     course_map[grade][course_name] = saint.select_on_liberal_arts(grade, course_name)
 
         return course_map
@@ -145,7 +152,7 @@ def _liberal_arts(year_range=[], semesters=[], **kwargs):
     return ret
 
 
-def _major(year_range=[], semesters=[], **kwargs):
+def _major(year_range=[], semesters=[], silent=False):
     """
     전공 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
@@ -227,7 +234,9 @@ def _major(year_range=[], semesters=[], **kwargs):
     saint = Saint()
 
     def __get_whole_course(year, semester):
-        print('{} {}'.format(year, semester))
+        if not silent:
+            print('{} {}'.format(year, semester))
+
         saint.select_year(year)
         saint.select_semester(semester)
         major_map = saint.get_major_map()
@@ -237,10 +246,13 @@ def _major(year_range=[], semesters=[], **kwargs):
             for faculty in major_map[college]:
                 course_map[college][faculty] = {key: [] for key in major_map[college][faculty]}
 
-        for college in major_map:
+        pbar = tqdm(major_map, disable=silent)
+        for college in pbar:
+            pbar.set_description("Processing %s" % college)
             for faculty in major_map[college]:
                 for major in major_map[college][faculty]:
-                    print('{} {} {}'.format(college, faculty, major))
+                    if not silent:
+                        print('{} {} {}'.format(college, faculty, major))
                     course_map[college][faculty][major] = saint.select_on_major(college, faculty, major)
 
         return course_map
@@ -253,7 +265,7 @@ def _major(year_range=[], semesters=[], **kwargs):
     return ret
 
 
-def _selective_liberal(year_range=[], semesters=[], **kwargs):
+def _selective_liberal(year_range=[], semesters=[], silent=False):
     """
     교양선택 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
@@ -348,14 +360,19 @@ def _selective_liberal(year_range=[], semesters=[], **kwargs):
     saint.select_semester('2 학기')
 
     def __get_whole_course(year, semester):
-        print('{} {}'.format(year, semester))
+        if not silent:
+            print('{} {}'.format(year, semester))
         saint.select_year(year)
         saint.select_semester(semester)
         selective_map = saint.get_selective_liberal_map()
         course_map = {course_name: {} for course_name in selective_map}
 
-        for course_name in selective_map:
+        pbar = tqdm(selective_map, disable=silent)
+        for course_name in pbar:
+            pbar.set_description("Processing %s" % course_name)
             if course_name != '':
+                if not silent:
+                    print("{}".format(course_name))
                 course_map[course_name] = saint.select_on_selective_liberal(course_name)
 
         return course_map
@@ -368,7 +385,7 @@ def _selective_liberal(year_range=[], semesters=[], **kwargs):
     return ret
 
 
-def _cyber(year_range=[], semesters=[], **kwargs):
+def _cyber(year_range=[], semesters=[], silent=False):
     """
     TODO:
     시간나면 만들기
