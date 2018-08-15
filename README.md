@@ -12,7 +12,7 @@ pip install pysaint
 ```python
 import pysaint
 
-res = pysaint.get('전공', ['2018'], ['2 학기'])
+res = pysaint.get('전공', '2018', '2 학기', silent=True)
 print(res)
 
 >>
@@ -120,7 +120,7 @@ print(res)
           },
           ...
 
-res = pysaint.get('교양선택', (2016, ), ('1 학기', ))
+res = pysaint.get('교양선택', (2016, ), ('1 학기', ), silent=False)
 print(res)
 {
   "2016": {

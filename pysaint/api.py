@@ -26,8 +26,6 @@ def get(course_type, year_range, semesters, **kwargs):
         >>> res = pysaint.get('교양선택', (2016, 2017, 2018), ('1 학기', ))
         >>> print(res)
 
-    TODO: add log option to decide silent or not
-
     :param course_type:
     :type course_type: str
     example )
@@ -35,20 +33,40 @@ def get(course_type, year_range, semesters, **kwargs):
             '전공'
             '교양선택'
     :param year_range:
-    :type year_range: list or tuple or range
+    :type year_range: list or tuple or range or str
+    example )
+            '2018'
+            ['2018']
+            [2018]
+            ['2017', '2018']
+            [2017, 2018]
+            (2015, 2016, 2017)
+            ('2016', '2017', '2018')
+            range(2015, 2019)
     :param semesters:
-    :type semesters: list or tuple
+    :type semesters: list or tuple or str
+    example )
+            '1 학기'
+            ['1 학기', '여름학기', '2 학기', '겨울학기']
+            ('1 학기', '2 학기', )
+
     :param silent: decide progress bar silent or not
     :return: dict
     """
 
-    if type(year_range) not in (tuple, list, range):
+    if type(year_range) not in (tuple, list, range, str):
         raise ValueError("get() got wrong arguments year_range: {}\n"
                          "expected tuple type or list, or range type but got {} type".format(year_range, type(year_range)))
 
-    if type(semesters) not in (tuple, list):
+    if type(semesters) not in (tuple, list, str):
         raise ValueError("get() got wrong arguments semesters: {}\n"
                          "expected tuple type or list type but got {} type".format(semesters, type(semesters)))
+
+    if type(year_range) is str:
+        year_range = [year_range]
+
+    if type(semesters) is str:
+        semesters = [semesters]
 
     reformed_year_range = []
     for year in year_range:
