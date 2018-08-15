@@ -1,11 +1,9 @@
-# python ./setup.py build
-# python ./setup.py install
 from setuptools import setup, find_packages
 import os
 
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
-VERSION = '1.4.4'
+VERSION = '1.4.45'
 
 
 def get_requirements(filename):

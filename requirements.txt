@@ -6,4 +6,5 @@ click==6.7
 idna==2.6
 lxml==4.1.1
 requests==2.18.4
+tqdm==4.24.0
 urllib3==1.22
