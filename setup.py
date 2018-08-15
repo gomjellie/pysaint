@@ -3,7 +3,7 @@ import os
 
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
-VERSION = '1.4.44'
+VERSION = '1.4.45'
 
 
 def get_requirements(filename):
