@@ -371,8 +371,6 @@ def _selective_liberal(year_range=[], semesters=[], silent=False):
         for course_name in pbar:
             pbar.set_description("Processing %s" % course_name)
             if course_name != '':
-                if not silent:
-                    print("{}".format(course_name))
                 course_map[course_name] = saint.select_on_selective_liberal(course_name)
 
         return course_map
