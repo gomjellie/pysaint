@@ -2,17 +2,11 @@
 
 saint.ssu.ac.kr 에서 수강신청 과목정보를 실시간으로 가져오는 라이브러리 입니다.
 
-## setup (for library developer)
-
-```sh
-python ./setup.py build
-python ./setup.py install
-```
-
 ## setup (for end user)
 ```sh
 pip install pysaint
 ```
+
 ## Usage
 
 ```python
