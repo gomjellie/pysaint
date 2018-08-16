@@ -33,7 +33,7 @@ def get(course_type, year_range, semesters, **kwargs):
             '전공'
             '교양선택'
     :param year_range:
-    :type year_range: list or tuple or range or str
+    :type year_range: list or tuple or range or str or int
     example )
             '2018'
             ['2018']
@@ -54,7 +54,7 @@ def get(course_type, year_range, semesters, **kwargs):
     :return: dict
     """
 
-    if type(year_range) not in (tuple, list, range, str):
+    if type(year_range) not in (tuple, list, range, str, int):
         raise ValueError("get() got wrong arguments year_range: {}\n"
                          "expected tuple type or list, or range type but got {} type".format(year_range, type(year_range)))
 
@@ -153,7 +153,7 @@ def _liberal_arts(year_range=[], semesters=[], silent=False):
 
         pbar = tqdm(liberal_map, disable=silent)
         for grade in pbar:
-            pbar.set_description("Processing %s" % grade)
+            pbar.set_description("Processing %s..." % grade[:10])
             for course_name in liberal_map[grade]:
                 if course_name != '':
                     if not silent:
@@ -266,7 +266,7 @@ def _major(year_range=[], semesters=[], silent=False):
 
         pbar = tqdm(major_map, disable=silent)
         for college in pbar:
-            pbar.set_description("Processing %s" % college)
+            pbar.set_description("Processing %s..." % college[:10])
             for faculty in major_map[college]:
                 for major in major_map[college][faculty]:
                     if not silent:
@@ -387,7 +387,7 @@ def _selective_liberal(year_range=[], semesters=[], silent=False):
 
         pbar = tqdm(selective_map, disable=silent)
         for course_name in pbar:
-            pbar.set_description("Processing %s" % course_name)
+            pbar.set_description("Processing %s..." % course_name[:10])
             if course_name != '':
                 course_map[course_name] = saint.select_on_selective_liberal(course_name)
 
