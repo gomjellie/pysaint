@@ -33,7 +33,7 @@ def get(course_type, year_range, semesters, **kwargs):
             '전공'
             '교양선택'
     :param year_range:
-    :type year_range: list or tuple or range or str
+    :type year_range: list or tuple or range or str or int
     example )
             '2018'
             ['2018']
@@ -54,7 +54,7 @@ def get(course_type, year_range, semesters, **kwargs):
     :return: dict
     """
 
-    if type(year_range) not in (tuple, list, range, str):
+    if type(year_range) not in (tuple, list, range, str, int):
         raise ValueError("get() got wrong arguments year_range: {}\n"
                          "expected tuple type or list, or range type but got {} type".format(year_range, type(year_range)))
 
