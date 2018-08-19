@@ -62,7 +62,7 @@ def get(course_type, year_range, semesters, **kwargs):
         raise ValueError("get() got wrong arguments semesters: {}\n"
                          "expected tuple type or list type but got {} type".format(semesters, type(semesters)))
 
-    if type(year_range) is str:
+    if type(year_range) in (str, int):
         year_range = [year_range]
 
     if type(semesters) is str:
@@ -141,8 +141,6 @@ def _liberal_arts(year_range=[], semesters=[], silent=False):
     saint.select_course_section('교양필수')
 
     def __get_whole_course(year, semester):
-        if not silent:
-            print('{} {}'.format(year, semester))
         saint.select_year(year)
         saint.select_semester(semester)
         liberal_map = saint.get_liberal_arts_map()
@@ -153,17 +151,19 @@ def _liberal_arts(year_range=[], semesters=[], silent=False):
 
         pbar = tqdm(liberal_map, disable=silent)
         for grade in pbar:
-            pbar.set_description("Processing %s..." % grade[:10])
+            pbar.set_description("Processing {:8s}".format(grade))
             for course_name in liberal_map[grade]:
                 if course_name != '':
-                    if not silent:
-                        print("{} {}".format(grade, course_name))
                     course_map[grade][course_name] = saint.select_on_liberal_arts(grade, course_name)
 
         return course_map
 
-    for year in year_range:
-        for semester in semesters:
+    year_bar = tqdm(year_range, disable=silent)
+    for year in year_bar:
+        year_bar.set_description("Year: {:4s}".format(year))
+        semester_bar = tqdm(year_range, disable=silent)
+        for semester in semester_bar:
+            semester_bar.set_description("Semester: {:6s}".format(semester))
             course_bunch = __get_whole_course(year, semester)
             ret[year][semester] = course_bunch
 
@@ -252,9 +252,6 @@ def _major(year_range=[], semesters=[], silent=False):
     saint = Saint()
 
     def __get_whole_course(year, semester):
-        if not silent:
-            print('{} {}'.format(year, semester))
-
         saint.select_year(year)
         saint.select_semester(semester)
         major_map = saint.get_major_map()
@@ -264,19 +261,23 @@ def _major(year_range=[], semesters=[], silent=False):
             for faculty in major_map[college]:
                 course_map[college][faculty] = {key: [] for key in major_map[college][faculty]}
 
-        pbar = tqdm(major_map, disable=silent)
-        for college in pbar:
-            pbar.set_description("Processing %s..." % college[:10])
-            for faculty in major_map[college]:
+        college_bar = tqdm(major_map, disable=silent)
+        for college in college_bar:
+            college_bar.set_description("Processing {:8s}".format(college))
+            faculty_bar = tqdm(major_map[college], disable=silent)
+            for faculty in faculty_bar:
+                faculty_bar.set_description_str("Processing {:8s}".format(faculty))
                 for major in major_map[college][faculty]:
-                    if not silent:
-                        print('{} {} {}'.format(college, faculty, major))
                     course_map[college][faculty][major] = saint.select_on_major(college, faculty, major)
 
         return course_map
 
-    for year in year_range:
-        for semester in semesters:
+    year_bar = tqdm(year_range, disable=silent)
+    for year in year_bar:
+        year_bar.set_description("Year: {:4}".format(year))
+        semester_bar = tqdm(semesters, disable=silent)
+        for semester in semester_bar:
+            semester_bar.set_description_str("Semester: {:6}".format(semester))
             course_bunch = __get_whole_course(year, semester)
             ret[year][semester] = course_bunch
 
@@ -378,8 +379,6 @@ def _selective_liberal(year_range=[], semesters=[], silent=False):
     saint.select_semester('2 학기')
 
     def __get_whole_course(year, semester):
-        if not silent:
-            print('{} {}'.format(year, semester))
         saint.select_year(year)
         saint.select_semester(semester)
         selective_map = saint.get_selective_liberal_map()
@@ -387,14 +386,18 @@ def _selective_liberal(year_range=[], semesters=[], silent=False):
 
         pbar = tqdm(selective_map, disable=silent)
         for course_name in pbar:
-            pbar.set_description("Processing %s..." % course_name[:10])
+            pbar.set_description("Processing {:8s}".format(course_name))
             if course_name != '':
                 course_map[course_name] = saint.select_on_selective_liberal(course_name)
 
         return course_map
 
-    for year in year_range:
-        for semester in semesters:
+    year_bar = tqdm(year_range, disable=silent)
+    for year in year_bar:
+        year_bar.set_description("Year: {:4s}".format(year))
+        semester_bar = tqdm(semesters, disable=silent)
+        for semester in semester_bar:
+            semester_bar.set_description("semester: {:6s}".format(semester))
             course_bunch = __get_whole_course(year, semester)
             ret[year][semester] = course_bunch
 
