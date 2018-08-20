@@ -161,7 +161,7 @@ def _liberal_arts(year_range=[], semesters=[], silent=False):
     year_bar = tqdm(year_range, disable=silent)
     for year in year_bar:
         year_bar.set_description("Year: {:4s}".format(year))
-        semester_bar = tqdm(year_range, disable=silent)
+        semester_bar = tqdm(semesters, disable=silent)
         for semester in semester_bar:
             semester_bar.set_description("Semester: {:6s}".format(semester))
             course_bunch = __get_whole_course(year, semester)
