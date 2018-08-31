@@ -34,7 +34,7 @@ import pysaint
 grades = pysaint.grade('2015xxxx')
 # or you can pass password parameter after id
 # e.g.) pysaint.grade('2015xxxx', 'example-password#%2015')
-for grade in grade:
+for grade in grades:
     print(grade)
 
 >>>
