@@ -1,5 +1,9 @@
 SOURCE_URL = "http://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/zcmw2100?sap-language=KO#"
 ECC_URL = "http://ecc.ssu.ac.kr"
+SAINT_URL = "http://saint.ssu.ac.kr"
+PORTAL_URL = "http://saint.ssu.ac.kr/irj/portal"
+POPUP_URL = "http://saint.ssu.ac.kr/ssu_logon/jsp/popupCheck.jsp"
+
 REQUEST_HEADERS = {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
     'Accept-Encoding': 'gzip, deflate, br',

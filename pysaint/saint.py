@@ -1,4 +1,4 @@
-from .constants import SOURCE_URL, ECC_URL, REQUEST_HEADERS, SESSION_HEADERS
+from .constants import *
 from .parser import *
 from . import sap_event_queue
 import requests
@@ -29,6 +29,64 @@ class Saint:
         self.faculty_key = get_faculty_key(self.soup_jar['base'])
         self.major_key = get_major_key(self.soup_jar['base'])
         self.search_id = get_search_id(self.soup_jar['base'])
+
+    def login(self, j_username, j_password):
+        """
+        log in saint.ssu.ac.kr
+        :param j_username: student id
+                e.g.)
+                2015xxxx
+        :param j_password: saint password
+        :return:
+        """
+        self.sess.get(SAINT_URL, headers=REQUEST_HEADERS)
+        res = self.sess.get(PORTAL_URL)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        j_salt = soup.find('input', {'name': 'j_salt'}).get('value')
+
+        # necessary to get JSESSIONID
+        self.sess.get(POPUP_URL)
+
+        login_data = sap_event_queue.get_login_data(j_salt, j_username, j_password)
+
+        self.sess.post(PORTAL_URL,
+                       headers={'Referer': PORTAL_URL},
+                       data=login_data)
+
+        login_get = self.sess.get(
+            'http://saint.ssu.ac.kr/irj/portal',
+            headers={
+                'Referer': PORTAL_URL,
+                'Host': 'saint.ssu.ac.kr'
+            })
+        self.soup_jar['login_soup'] = BeautifulSoup(login_get.text, 'lxml')
+
+        user_name = get_login_user_name(self.soup_jar['login_soup'])
+        if user_name is 'fail':
+            print("failed to login")
+        else:
+            print("log in success! user_name: {}".format(user_name))
+
+    def get_grade(self):
+        """
+        ! login required !
+
+        :return:
+        list
+        which has dictionary as it's element
+        element has ['과목ID', '과목명', '이수년도', '이수학기', '학점수', '성적기호', '학술연구상태', '제외사유', '신청구분', '신청일', '승인취소일', '신청', '취소'])
+        keys
+        """
+        sugang = self.sess.get('http://ecc.ssu.ac.kr/sap/bc/webdynpro/SAP/ZCMW2140#')
+        soup = BeautifulSoup(sugang.text, 'html.parser')
+        form = soup.find('form', {'name': 'sap.client.SsrClient.form'})
+        action = form.get('action')
+
+        table_html = self.sess.post('http://ecc.ssu.ac.kr/sap/bc/webdynpro/SAP/ZCMW2140' + action)
+        self.soup_jar['grade_table'] = BeautifulSoup(table_html.text, 'lxml')
+
+        grade_card = parse_grade_card(self.soup_jar['grade_table'])
+        return grade_card
 
     def select_year(self, year):
         """

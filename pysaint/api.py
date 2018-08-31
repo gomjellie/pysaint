@@ -88,6 +88,20 @@ def get(course_type, year_range, semesters, **kwargs):
                          "expected to get '교양필수', '전공', '교양선택'".format(course_type))
 
 
+def grade(id, password=None):
+    """
+    get grade card from saint.ssu.ac.kr
+    :param id: student id
+            e.g.) 2015xxxx
+    :param password: saint password
+    :return:
+    list
+    """
+    saint = login(id, password)
+    grade_card = saint.get_grade()
+    return grade_card
+
+
 def _liberal_arts(year_range=[], semesters=[], silent=False):
     """
     교양필수 과목들을 학기 단위로 묶어서 반환한다.
@@ -412,3 +426,21 @@ def _cyber(year_range=[], semesters=[], silent=False):
     :param semesters:
     :return:
     """
+
+
+def login(user_id, password=None):
+    """
+    log in saint.ssu.ac.kr
+    :param user_id:  student id
+    :param password: saint password
+    :return:
+    """
+    if password is None:
+        import getpass
+        password = getpass.getpass("PASSWORD for {}: ".format(user_id))
+    else:
+        password = password
+
+    saint = Saint()
+    saint.login(user_id, password)
+    return saint
