@@ -38,6 +38,39 @@ def get_login_user_name(login_soup):
     return name_span.text
 
 
+def parse_grade_card(grade_table_soup):
+    """
+    get user's grade card
+    :param grade_table_soup:
+    soup_jar['grade_table']
+    :return:
+    list
+    which has dictionary as it's element
+    element has ['과목ID', '과목명', '이수년도', '이수학기', '학점수', '성적기호', '학술연구상태', '제외사유', '신청구분', '신청일', '승인취소일', '신청', '취소'])
+    keys
+
+    """
+    tbody = grade_table_soup.find('tbody', {'id': 'WD15-contentTBody'})
+    th = tbody.find_all('th')
+    tr = tbody.find_all('tr')
+
+    headers = [each.text for each in th]
+    # ['과목ID', '과목명', '이수년도', '이수학기', '학점수', '성적기호', '학술연구상태', '제외사유', '신청구분', '신청일', '승인취소일', '신청', '취소']
+
+    tds = [each for each in tr]
+    subjects = []
+    for td in tds[1:]:
+        cell = [cell.text for cell in td]
+        subjects.append(cell)
+
+    ret = []
+    for subject in subjects:
+        single = dict((headers[i], subject[i]) for i in range(len(subject)))
+        ret.append(single)
+
+    return ret
+
+
 def get_tab_item_index(base_soup, section):
     """
     ItemIndex 를 얻는다.

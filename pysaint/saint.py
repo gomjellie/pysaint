@@ -67,6 +67,27 @@ class Saint:
         else:
             print("log in success! user_name: {}".format(user_name))
 
+    def get_grade(self):
+        """
+        ! login required !
+
+        :return:
+        list
+        which has dictionary as it's element
+        element has ['과목ID', '과목명', '이수년도', '이수학기', '학점수', '성적기호', '학술연구상태', '제외사유', '신청구분', '신청일', '승인취소일', '신청', '취소'])
+        keys
+        """
+        sugang = self.sess.get('http://ecc.ssu.ac.kr/sap/bc/webdynpro/SAP/ZCMW2140#')
+        soup = BeautifulSoup(sugang.text, 'html.parser')
+        form = soup.find('form', {'name': 'sap.client.SsrClient.form'})
+        action = form.get('action')
+
+        table_html = self.sess.post('http://ecc.ssu.ac.kr/sap/bc/webdynpro/SAP/ZCMW2140' + action)
+        self.soup_jar['grade_table'] = BeautifulSoup(table_html.text, 'lxml')
+
+        grade_card = parse_grade_card(self.soup_jar['grade_table'])
+        return grade_card
+
     def select_year(self, year):
         """
         :param year:
