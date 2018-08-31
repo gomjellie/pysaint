@@ -24,6 +24,20 @@ import re
 import ast
 
 
+def get_login_user_name(login_soup):
+    """
+    return user's korean name
+    :param login_soup:
+    self.soup_jar['login_soup']
+    :return:
+    """
+    name_span = login_soup.find('span', {'class': 'fontS01'})
+    if name_span is None:
+        return 'fail'
+
+    return name_span.text
+
+
 def get_tab_item_index(base_soup, section):
     """
     ItemIndex 를 얻는다.

@@ -4,6 +4,19 @@
 """
 
 
+def get_login_data(j_salt, j_username, j_password):
+    data = {
+            'login_submit': 'on',
+            'login_do_redirect': 1,
+            'no_cert_storing': 'on',
+            'j_salt': j_salt,
+            'j_username': j_username,
+            'j_password': j_password,
+    }
+
+    return data
+
+
 def combo_select(key_id, skey, sap_wd_secure_id):
     data = {
         'sap-charset': 'utf-8',

@@ -1,4 +1,4 @@
-from .constants import SOURCE_URL, ECC_URL, REQUEST_HEADERS, SESSION_HEADERS
+from .constants import SOURCE_URL, ECC_URL, REQUEST_HEADERS, SESSION_HEADERS, PORTAL_URL, SAINT_URL
 from .parser import *
 from . import sap_event_queue
 import requests
@@ -29,6 +29,43 @@ class Saint:
         self.faculty_key = get_faculty_key(self.soup_jar['base'])
         self.major_key = get_major_key(self.soup_jar['base'])
         self.search_id = get_search_id(self.soup_jar['base'])
+
+    def login(self, j_username, j_password):
+        """
+        log in saint.ssu.ac.kr
+        :param user_id: student id
+                e.g.)
+                2015xxxx
+        :param password: saint password
+        :return:
+        """
+        self.sess.get(SAINT_URL, headers=REQUEST_HEADERS)
+        res = self.sess.get(PORTAL_URL)
+        soup = BeautifulSoup(res.text, 'html.parser')
+        j_salt = soup.find('input', {'name': 'j_salt'}).get('value')
+
+        # necessary to get JSESSIONID
+        self.sess.get('http://saint.ssu.ac.kr/ssu_logon/jsp/popupCheck.jsp')
+
+        login_data = sap_event_queue.get_login_data(j_salt, j_username, j_password)
+
+        self.sess.post(PORTAL_URL,
+                       headers={'Referer': PORTAL_URL},
+                       data=login_data)
+
+        login_get = self.sess.get(
+            'http://saint.ssu.ac.kr/irj/portal',
+            headers={
+                'Referer': PORTAL_URL,
+                'Host': 'saint.ssu.ac.kr'
+            })
+        self.soup_jar['login_soup'] = BeautifulSoup(login_get.text, 'lxml')
+
+        user_name = get_login_user_name(self.soup_jar['login_soup'])
+        if user_name is 'fail':
+            print("failed to login")
+        else:
+            print("log in success! user_name: {}".format(user_name))
 
     def select_year(self, year):
         """
