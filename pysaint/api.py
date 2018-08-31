@@ -415,6 +415,12 @@ def _cyber(year_range=[], semesters=[], silent=False):
 
 
 def login(user_id, password=None):
+    """
+    log in saint.ssu.ac.kr
+    :param user_id:  student id
+    :param password: saint password
+    :return:
+    """
     if password is None:
         import getpass
         password = getpass.getpass("PASSWORD for {}: ".format(user_id))

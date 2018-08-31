@@ -33,10 +33,10 @@ class Saint:
     def login(self, j_username, j_password):
         """
         log in saint.ssu.ac.kr
-        :param user_id: student id
+        :param j_username: student id
                 e.g.)
                 2015xxxx
-        :param password: saint password
+        :param j_password: saint password
         :return:
         """
         self.sess.get(SAINT_URL, headers=REQUEST_HEADERS)
