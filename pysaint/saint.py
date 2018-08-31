@@ -1,4 +1,4 @@
-from .constants import SOURCE_URL, ECC_URL, REQUEST_HEADERS, SESSION_HEADERS, PORTAL_URL, SAINT_URL
+from .constants import *
 from .parser import *
 from . import sap_event_queue
 import requests
@@ -45,7 +45,7 @@ class Saint:
         j_salt = soup.find('input', {'name': 'j_salt'}).get('value')
 
         # necessary to get JSESSIONID
-        self.sess.get('http://saint.ssu.ac.kr/ssu_logon/jsp/popupCheck.jsp')
+        self.sess.get(POPUP_URL)
 
         login_data = sap_event_queue.get_login_data(j_salt, j_username, j_password)
 
