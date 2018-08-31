@@ -31,8 +31,9 @@ pysaint.save_json('./json/', '{}-{}-전공'.format('2016', '1 학기'), res)
 ```python
 import pysaint
 
-grades = pysaint.grade('2015xxxx') # or you can pass password parameter
-
+grades = pysaint.grade('2015xxxx')
+# or you can pass password parameter after id
+# e.g.) pysaint.grade('2015xxxx', 'example-password#%2015')
 for grade in grade:
     print(grade)
 
