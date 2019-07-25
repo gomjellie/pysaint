@@ -1,5 +1,7 @@
 # pysaint
 
+warning: It doesn't work now! I'm gonna fix it ASAP. sorry!
+
 saint.ssu.ac.kr 에서 수강신청 과목정보를 실시간으로 가져오는 라이브러리 입니다.
 
 ## setup (for end user)
