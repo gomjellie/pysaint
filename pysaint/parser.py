@@ -183,7 +183,7 @@ def get_liberal_arts_skey(soup_grade, course_name):
     '컴퓨팅적사고'
     :return:
     """
-    course_elem = soup_grade.find('td', text=course_name).parent
+    course_elem = soup_grade.find('div', {'class': 'lsListbox__value'}, text=course_name)
     course_skey = get_skey(course_elem)
     return course_skey
 
@@ -248,16 +248,18 @@ def get_liberal_arts_courses(grade_soup):
     :return:
     """
     content = grade_soup.find('content')
-    divs = content.find_all('div', {'class': 'lsItemlistbox__root'})
-    if len(divs) != 2:
-        raise Exception()
 
-    course_divs = divs[1]
-    tds = course_divs.find_all('td')
-    liberal_arts_courses = []
-    for td in tds:
-        liberal_arts_courses.append(td.text)
-    return liberal_arts_courses
+    first_div = content.find('div')
+    siblings = first_div.find_next_siblings()
+    if len(siblings) == 1:
+        liberal_div = first_div.find_next_siblings()[0]
+        divs = liberal_div.find_all('div', {'class': 'lsListbox__value'})
+        liberals = []
+        for div in divs:
+            liberals.append(div.text)
+        return liberals
+    else:
+        raise Exception()
 
 
 def get_colleges(semester_soup):
@@ -407,8 +409,8 @@ def get_grade_skey_from_liberal_arts_tab(liberal_arts_soup, grade):
     '전체학년', '1학년', '2학년', '3학년', '4학년', '5학년'
     :return:
     """
-    tr = liberal_arts_soup.find('tr', text=grade)
-    lsdata = tr.get('lsdata')
+    div = liberal_arts_soup.find('div', text=grade)
+    lsdata = div.get('lsdata')
     lsdata_dict = ast.literal_eval(lsdata)
     return lsdata_dict[0]
 
