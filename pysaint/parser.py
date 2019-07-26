@@ -189,7 +189,7 @@ def get_liberal_arts_skey(soup_grade, course_name):
 
 
 def get_major_skey(soup_major, major):
-    major_skey_elem = soup_major.find_all('tr', text=major)
+    major_skey_elem = soup_major.find_all('div', text=major)
     major_skey_elem = major_skey_elem[len(major_skey_elem) - 1]
     major_skey = get_skey(major_skey_elem)
     return major_skey
@@ -282,10 +282,10 @@ def get_colleges(semester_soup):
     """
     content = semester_soup.find('content')
     college_div = content.find('div')
-    tds = college_div.tbody.find_all('td')
+    divs = college_div.find_all('div', {'lsdata': True})
     colleges = []
-    for td in tds:
-        colleges.append(td.text)
+    for div in divs:
+        colleges.append(div.text)
     return colleges
 
 
