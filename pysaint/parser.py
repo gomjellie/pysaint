@@ -137,16 +137,15 @@ def get_sap_wd_secure_id(soup_base):
 
 
 def get_selective_course_skey(selective_soup, course_name):
-    course_td = selective_soup.find('td', text=course_name)
-    course_tr = course_td.parent
-    course_yaml = course_tr.get('lsdata')
+    course_div = selective_soup.find('div', text=course_name)
+    course_yaml = course_div.get('lsdata')
     course_skey = ast.literal_eval(course_yaml)[0]
     return course_skey
 
 
 def get_semester_skey(soup_base, semester):
     if semester in ['1 학기', '여름학기', '2 학기', '겨울학기']:
-        semester = soup_base.find('tr', text=semester)
+        semester = soup_base.find('div', text=semester)
         skey_yaml = semester.get('lsdata')
         semester_skey = ast.literal_eval(skey_yaml)[0]
         return semester_skey
@@ -183,13 +182,13 @@ def get_liberal_arts_skey(soup_grade, course_name):
     '컴퓨팅적사고'
     :return:
     """
-    course_elem = soup_grade.find('td', text=course_name).parent
+    course_elem = soup_grade.find('div', {'class': 'lsListbox__value'}, text=course_name)
     course_skey = get_skey(course_elem)
     return course_skey
 
 
 def get_major_skey(soup_major, major):
-    major_skey_elem = soup_major.find_all('tr', text=major)
+    major_skey_elem = soup_major.find_all('div', text=major)
     major_skey_elem = major_skey_elem[len(major_skey_elem) - 1]
     major_skey = get_skey(major_skey_elem)
     return major_skey
@@ -208,13 +207,13 @@ def get_college_skey(soup_base, college):
     :param college:
     :return:
     """
-    col_elem = soup_base.find('tr', text=college)  # 인문대학 법과대학 등등....
+    col_elem = soup_base.find('div', text=college)  # 인문대학 법과대학 등등....
     col_skey = get_skey(col_elem)
     return col_skey
 
 
 def get_faculty_skey(soup_faculty, faculty):
-    faculty_skey_elem = soup_faculty.find('tr', text=faculty)
+    faculty_skey_elem = soup_faculty.find('div', text=faculty)
     faculty_skey = get_skey(faculty_skey_elem)
     return faculty_skey
 
@@ -248,16 +247,18 @@ def get_liberal_arts_courses(grade_soup):
     :return:
     """
     content = grade_soup.find('content')
-    divs = content.find_all('div', {'class': 'lsItemlistbox__root'})
-    if len(divs) != 2:
-        raise Exception()
 
-    course_divs = divs[1]
-    tds = course_divs.find_all('td')
-    liberal_arts_courses = []
-    for td in tds:
-        liberal_arts_courses.append(td.text)
-    return liberal_arts_courses
+    first_div = content.find('div')
+    siblings = first_div.find_next_siblings()
+    if len(siblings) == 1:
+        liberal_div = first_div.find_next_siblings()[0]
+        divs = liberal_div.find_all('div', {'class': 'lsListbox__value'})
+        liberals = []
+        for div in divs:
+            liberals.append(div.text)
+        return liberals
+    else:
+        raise Exception()
 
 
 def get_colleges(semester_soup):
@@ -282,10 +283,10 @@ def get_colleges(semester_soup):
     """
     content = semester_soup.find('content')
     college_div = content.find('div')
-    tds = college_div.tbody.find_all('td')
+    divs = college_div.find_all('div', {'lsdata': True})
     colleges = []
-    for td in tds:
-        colleges.append(td.text)
+    for div in divs:
+        colleges.append(div.text)
     return colleges
 
 
@@ -307,11 +308,11 @@ def get_faculties(college_soup):
     first_div = content.find('div')
     siblings = first_div.find_next_siblings()
     if len(siblings) == 2:
-        major_div = first_div.find_next_siblings()[0]
-        tds = major_div.tbody.find_all('td')
+        faculty_div = first_div.find_next_siblings()[0]
+        divs = faculty_div.find_all('div', {'lsdata': True})
         faculties = []
-        for td in tds:
-            faculties.append(td.text)
+        for div in divs:
+            faculties.append(div.text)
         return faculties
     else:
         raise Exception()
@@ -328,10 +329,10 @@ def get_majors(faculty_soup):
     siblings = first_div.find_next_siblings()
     if len(siblings) == 2:
         major_div = first_div.find_next_siblings()[1]
-        tds = major_div.tbody.find_all('td')
+        divs = major_div.find_all('div', {'lsdata': True})
         majors = []
-        for td in tds:
-            majors.append(td.text)
+        for div in divs:
+            majors.append(div.text)
             if '' in majors:
                 majors.remove('')
         return majors
@@ -345,16 +346,14 @@ def get_selective_courses(selective_soup):
     self.soup_jar['교양선택']
     :return:
     """
-    course_td = selective_soup.find('td', text='전체')
-    course_tr = course_td.parent
-    nexts = course_tr.find_next_siblings()
-    prevs = course_tr.find_previous_siblings()
+    course_div = selective_soup.find('div', text='전체')
+    nexts = course_div.find_next_siblings()
+    prevs = course_div.find_previous_siblings()
     courses = ['전체']
     for n in nexts:
         courses.append(n.text.strip())
     for p in prevs:
         courses.append(p.text.strip())
-
     return courses
 
 
@@ -407,8 +406,8 @@ def get_grade_skey_from_liberal_arts_tab(liberal_arts_soup, grade):
     '전체학년', '1학년', '2학년', '3학년', '4학년', '5학년'
     :return:
     """
-    tr = liberal_arts_soup.find('tr', text=grade)
-    lsdata = tr.get('lsdata')
+    div = liberal_arts_soup.find('div', text=grade)
+    lsdata = div.get('lsdata')
     lsdata_dict = ast.literal_eval(lsdata)
     return lsdata_dict[0]
 
