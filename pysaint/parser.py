@@ -137,9 +137,8 @@ def get_sap_wd_secure_id(soup_base):
 
 
 def get_selective_course_skey(selective_soup, course_name):
-    course_td = selective_soup.find('td', text=course_name)
-    course_tr = course_td.parent
-    course_yaml = course_tr.get('lsdata')
+    course_div = selective_soup.find('div', text=course_name)
+    course_yaml = course_div.get('lsdata')
     course_skey = ast.literal_eval(course_yaml)[0]
     return course_skey
 
@@ -347,16 +346,14 @@ def get_selective_courses(selective_soup):
     self.soup_jar['교양선택']
     :return:
     """
-    course_td = selective_soup.find('td', text='전체')
-    course_tr = course_td.parent
-    nexts = course_tr.find_next_siblings()
-    prevs = course_tr.find_previous_siblings()
+    course_div = selective_soup.find('div', text='전체')
+    nexts = course_div.find_next_siblings()
+    prevs = course_div.find_previous_siblings()
     courses = ['전체']
     for n in nexts:
         courses.append(n.text.strip())
     for p in prevs:
         courses.append(p.text.strip())
-
     return courses
 
 
