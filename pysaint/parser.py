@@ -347,16 +347,14 @@ def get_selective_courses(selective_soup):
     self.soup_jar['교양선택']
     :return:
     """
-    course_td = selective_soup.find('td', text='전체')
-    course_tr = course_td.parent
-    nexts = course_tr.find_next_siblings()
-    prevs = course_tr.find_previous_siblings()
+    course_div = selective_soup.find('div', text='전체')
+    nexts = course_div.find_next_siblings()
+    prevs = course_div.find_previous_siblings()
     courses = ['전체']
     for n in nexts:
         courses.append(n.text.strip())
     for p in prevs:
         courses.append(p.text.strip())
-
     return courses
 
 
