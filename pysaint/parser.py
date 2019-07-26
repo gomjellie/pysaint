@@ -146,7 +146,7 @@ def get_selective_course_skey(selective_soup, course_name):
 
 def get_semester_skey(soup_base, semester):
     if semester in ['1 학기', '여름학기', '2 학기', '겨울학기']:
-        semester = soup_base.find('tr', text=semester)
+        semester = soup_base.find('div', text=semester)
         skey_yaml = semester.get('lsdata')
         semester_skey = ast.literal_eval(skey_yaml)[0]
         return semester_skey
@@ -208,13 +208,13 @@ def get_college_skey(soup_base, college):
     :param college:
     :return:
     """
-    col_elem = soup_base.find('tr', text=college)  # 인문대학 법과대학 등등....
+    col_elem = soup_base.find('div', text=college)  # 인문대학 법과대학 등등....
     col_skey = get_skey(col_elem)
     return col_skey
 
 
 def get_faculty_skey(soup_faculty, faculty):
-    faculty_skey_elem = soup_faculty.find('tr', text=faculty)
+    faculty_skey_elem = soup_faculty.find('div', text=faculty)
     faculty_skey = get_skey(faculty_skey_elem)
     return faculty_skey
 
@@ -307,11 +307,11 @@ def get_faculties(college_soup):
     first_div = content.find('div')
     siblings = first_div.find_next_siblings()
     if len(siblings) == 2:
-        major_div = first_div.find_next_siblings()[0]
-        tds = major_div.tbody.find_all('td')
+        faculty_div = first_div.find_next_siblings()[0]
+        divs = faculty_div.find_all('div', {'lsdata': True})
         faculties = []
-        for td in tds:
-            faculties.append(td.text)
+        for div in divs:
+            faculties.append(div.text)
         return faculties
     else:
         raise Exception()
@@ -328,10 +328,10 @@ def get_majors(faculty_soup):
     siblings = first_div.find_next_siblings()
     if len(siblings) == 2:
         major_div = first_div.find_next_siblings()[1]
-        tds = major_div.tbody.find_all('td')
+        divs = major_div.find_all('div', {'lsdata': True})
         majors = []
-        for td in tds:
-            majors.append(td.text)
+        for div in divs:
+            majors.append(div.text)
             if '' in majors:
                 majors.remove('')
         return majors
