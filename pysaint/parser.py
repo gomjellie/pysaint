@@ -137,9 +137,8 @@ def get_sap_wd_secure_id(soup_base):
 
 
 def get_selective_course_skey(selective_soup, course_name):
-    course_td = selective_soup.find('td', text=course_name)
-    course_tr = course_td.parent
-    course_yaml = course_tr.get('lsdata')
+    course_div = selective_soup.find('div', text=course_name)
+    course_yaml = course_div.get('lsdata')
     course_skey = ast.literal_eval(course_yaml)[0]
     return course_skey
 
