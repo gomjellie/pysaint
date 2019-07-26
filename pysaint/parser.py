@@ -183,7 +183,7 @@ def get_liberal_arts_skey(soup_grade, course_name):
     '컴퓨팅적사고'
     :return:
     """
-    course_elem = soup_grade.find('td', text=course_name).parent
+    course_elem = soup_grade.find('div', {'class': 'lsListbox__value'}, text=course_name)
     course_skey = get_skey(course_elem)
     return course_skey
 
