@@ -355,8 +355,8 @@ class Saint:
         self.select_course_section('교양필수')
         for grade in grades:
             self._select_grade(grade)
-            majors = get_liberal_arts_courses(self.soup_jar['grade'])
-            liberal_arts_map[grade] = majors
+            liberals = get_liberal_arts_courses(self.soup_jar['grade'])
+            liberal_arts_map[grade] = liberals
 
         return liberal_arts_map
 
