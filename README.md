@@ -1,10 +1,6 @@
 # pysaint
 
-~~warning: It doesn't work now! I'm gonna fix it ASAP. sorry!~~
-
-it works on version upper than 1.5.2. 
-
-saint.ssu.ac.kr 에서 수강신청 과목정보를 실시간으로 가져오는 라이브러리 입니다.
+[saint.ssu.ac.kr](https://saint.ssu.ac.kr) 에서 수강신청 과목정보를 실시간으로 가져오는 라이브러리 입니다.
 
 ## setup (for end user)
 ```sh
