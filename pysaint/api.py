@@ -70,11 +70,11 @@ def get(course_type, year_range, semesters, **kwargs):
 
     reformed_year_range = []
     for year in year_range:
-        if 2000 < int(year) < 2020:
+        if 2000 < int(year) < 2021:
             pass
         else:
             raise ValueError("get() got wrong arguments year_range: {}\n"
-                             "expected to be in year range(2000, 2020) but got {}".format(year_range, int(year)))
+                             "expected to be in year range(2000, 2021) but got {}".format(year_range, int(year)))
         reformed_year_range.append("{}".format(year))
 
     if course_type == '교양필수':
