@@ -179,18 +179,11 @@ def _liberal_arts(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=Fa
         }
     }
     """
-    if not Line.has_value(line):
-        raise ValueError("_liberal_arts() got wrong arguments line: {}\n"
-                         "line should be one of {}".format(line, Line.list()))
-
     ret = {year: {} for year in year_range}
     saint = Saint()
     saint.select_course_section('교양필수')
 
     def __get_whole_course(year, semester, _line=line):
-        if not Line.has_value(_line):
-            raise ValueError("_liberal_arts._get_whole_course() got wrong arguments line: {}\n"
-                             "line should be one of {}".format(_line, Line.list()))
 
         saint.select_year(year)
         saint.select_semester(semester)
@@ -301,18 +294,10 @@ def _major(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False):
         }
     }
     """
-    if not Line.has_value(line):
-        raise ValueError("_major() got wrong arguments line: {}\n"
-                         "line should be one of {}".format(line, Line.list()))
-
     ret = {year: {} for year in year_range}
     saint = Saint()
 
     def __get_whole_course(year, semester, _line=line):
-        if not Line.has_value(_line):
-            raise ValueError("_major._get_whole_course() got wrong arguments line: {}\n"
-                             "line should be one of {}".format(_line, Line.list()))
-
         saint.select_year(year)
         saint.select_semester(semester)
         saint.select_line(_line)
@@ -433,10 +418,6 @@ def _selective_liberal(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, sile
         }
     }
     """
-    if not Line.has_value(line):
-        raise ValueError("_selective_liberal() got wrong arguments line: {}\n"
-                         "line should be one of {}".format(line, Line.list()))
-
     ret = {year: {} for year in year_range}
     saint = Saint()
     saint.select_course_section('교양선택')
@@ -446,10 +427,6 @@ def _selective_liberal(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, sile
     saint.select_semester('2 학기')
 
     def __get_whole_course(year, semester, _line=line):
-        if not Line.has_value(_line):
-            raise ValueError("_selective_liberal._get_whole_course() got wrong arguments line: {}\n"
-                             "line should be one of {}".format(_line, Line.list()))
-
         saint.select_year(year)
         saint.select_semester(semester)
         saint.select_line(_line)
