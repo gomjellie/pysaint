@@ -33,3 +33,20 @@ SESSION_HEADERS = {
     'user-agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_11_6)" +
                   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
 }
+
+from enum import Enum
+class Line(Enum):
+    TEN = 10
+    TWENTY = 20
+    FIFTY = 50
+    HUNDRED = 100
+    TWO_HUNDRED = 200
+    FIVE_HUNDRED = 500
+
+    @classmethod
+    def has_value(cls, val):
+        return val in cls.list()
+
+    @classmethod
+    def list(cls):
+        return list(map(lambda e: e.value, Line))

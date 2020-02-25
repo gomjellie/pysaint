@@ -173,6 +173,10 @@ def get_major_key(soup_base):
     major_key = major.get('id')
     return major_key
 
+def get_line_key(soup_base):
+    line = soup_base.find('input', {"lsdata": re.compile(r"9:'100'")})
+    line_key = line.get('id')
+    return line_key
 
 def get_liberal_arts_skey(soup_grade, course_name):
     """
