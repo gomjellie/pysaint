@@ -27,7 +27,7 @@ def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
         >>> res = pysaint.get('교양선택', (2016, 2017, 2018), ('1 학기', ))
         >>> print(res)
 
-        >>> res = pysaint.get('전공', ['2018'], ['2 학기'], 200)
+        >>> res = pysaint.get('전공', ['2018'], ['2 학기'], line=200)
         >>> print(res)
 
     :param course_type:

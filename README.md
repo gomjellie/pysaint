@@ -20,6 +20,8 @@ res = pysaint.get('교양필수', range(2015, 2017), ('1 학기', '여름학기'
 
 res = pysaint.get('교양선택', (2016, ), ('1 학기', ), silent=False)
 
+res = pysaint.get('전공', '2018', '2 학기', line=200, silent=True)
+
 # freeze as json file format
 pysaint.save_json('./json/', '{}-{}-전공'.format('2016', '1 학기'), res)
 
