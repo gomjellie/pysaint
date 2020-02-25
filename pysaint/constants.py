@@ -43,6 +43,9 @@ class Line(Enum):
     TWO_HUNDRED = 200
     FIVE_HUNDRED = 500
 
+    def __int__(self):
+        return self.value
+
     @classmethod
     def has_value(cls, val):
         return val in cls.list()
