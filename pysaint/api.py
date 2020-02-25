@@ -10,7 +10,7 @@ import copy
 from tqdm import tqdm
 
 
-def get(course_type, year_range, semesters, line=int(Line.FIVE_HUNDRED), **kwargs):
+def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
     """
     THIS IS THE END POINT OF pysaint API
     USAGE::
@@ -215,7 +215,7 @@ def _liberal_arts(year_range=[], semesters=[], line=int(Line.FIVE_HUNDRED), sile
     return ret
 
 
-def _major(year_range=[], semesters=[], line=int(Line.FIVE_HUNDRED), silent=False):
+def _major(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False):
     """
     전공 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
@@ -331,7 +331,7 @@ def _major(year_range=[], semesters=[], line=int(Line.FIVE_HUNDRED), silent=Fals
     return ret
 
 
-def _selective_liberal(year_range=[], semesters=[], line=int(Line.FIVE_HUNDRED), silent=False):
+def _selective_liberal(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False):
     """
     교양선택 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:

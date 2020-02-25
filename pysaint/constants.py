@@ -34,8 +34,7 @@ SESSION_HEADERS = {
                   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/61.0.3163.100 Safari/537.36",
 }
 
-from enum import Enum
-class Line(Enum):
+class Line:
     TEN = 10
     TWENTY = 20
     FIFTY = 50
@@ -43,13 +42,6 @@ class Line(Enum):
     TWO_HUNDRED = 200
     FIVE_HUNDRED = 500
 
-    def __int__(self):
-        return self.value
-
     @classmethod
     def has_value(cls, val):
-        return val in cls.list()
-
-    @classmethod
-    def list(cls):
-        return list(map(lambda e: e.value, Line))
+        return val in [cls.TEN, cls.TWENTY, cls.FIFTY, cls.HUNDRED, cls.TWO_HUNDRED, cls.FIVE_HUNDRED ]
