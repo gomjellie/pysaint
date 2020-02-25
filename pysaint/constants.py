@@ -43,5 +43,10 @@ class Line:
     FIVE_HUNDRED = 500
 
     @classmethod
+    def list(cls):
+        members = [getattr(Line, attr) for attr in dir(Line) if not callable(getattr(Line, attr)) and not attr.startswith("__")]
+        return sorted(members)
+    
+    @classmethod
     def has_value(cls, val):
-        return val in [cls.TEN, cls.TWENTY, cls.FIFTY, cls.HUNDRED, cls.TWO_HUNDRED, cls.FIVE_HUNDRED ]
+        return val in cls.list()
