@@ -4,12 +4,13 @@
 
 """
 
+from .constants import Line
 from .saint import Saint
 import copy
 from tqdm import tqdm
 
 
-def get(course_type, year_range, semesters, **kwargs):
+def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
     """
     THIS IS THE END POINT OF pysaint API
     USAGE::
@@ -24,6 +25,9 @@ def get(course_type, year_range, semesters, **kwargs):
 
 
         >>> res = pysaint.get('교양선택', (2016, 2017, 2018), ('1 학기', ))
+        >>> print(res)
+
+        >>> res = pysaint.get('전공', ['2018'], ['2 학기'], line=200)
         >>> print(res)
 
     :param course_type:
@@ -50,6 +54,16 @@ def get(course_type, year_range, semesters, **kwargs):
             ['1 학기', '여름학기', '2 학기', '겨울학기']
             ('1 학기', '2 학기', )
 
+    :param line:
+        :type line: int
+        example )
+                10
+                20
+                50
+                100
+                200
+                500
+
     :param silent: decide progress bar silent or not
     :return: dict
     """
@@ -68,6 +82,10 @@ def get(course_type, year_range, semesters, **kwargs):
     if type(semesters) is str:
         semesters = [semesters]
 
+    if not Line.has_value(line):
+        raise ValueError("get() got wrong arguments line: {}\n"
+                         "line should be one of {}".format(line, Line.list()))
+
     reformed_year_range = []
     for year in year_range:
         if 2000 < int(year) < 2021:
@@ -78,11 +96,11 @@ def get(course_type, year_range, semesters, **kwargs):
         reformed_year_range.append("{}".format(year))
 
     if course_type == '교양필수':
-        return _liberal_arts(year_range=reformed_year_range, semesters=semesters, **kwargs)
+        return _liberal_arts(year_range=reformed_year_range, semesters=semesters, line=line, **kwargs)
     elif course_type == '전공':
-        return _major(year_range=reformed_year_range, semesters=semesters, **kwargs)
+        return _major(year_range=reformed_year_range, semesters=semesters, line=line,**kwargs)
     elif course_type == '교양선택':
-        return _selective_liberal(year_range=reformed_year_range, semesters=semesters, **kwargs)
+        return _selective_liberal(year_range=reformed_year_range, semesters=semesters, line=line, **kwargs)
     else:
         raise ValueError("get() got wrong arguments course_type: {} \n"
                          "expected to get '교양필수', '전공', '교양선택'".format(course_type))
@@ -102,7 +120,7 @@ def grade(id, password=None):
     return grade_card
 
 
-def _liberal_arts(year_range=[], semesters=[], silent=False):
+def _liberal_arts(year_range=[], semesters=[], line=int(Line.FIVE_HUNDRED), silent=False):
     """
     교양필수 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
@@ -117,6 +135,17 @@ def _liberal_arts(year_range=[], semesters=[], silent=False):
             ['1 학기', '여름학기', '2 학기', '겨울학기']
             or
             ('1 학기')
+
+    :param line:
+        :type line: int
+        example )
+                10
+                20
+                50
+                100
+                200
+                500
+
     :return:
     {
         2013: {
@@ -154,9 +183,11 @@ def _liberal_arts(year_range=[], semesters=[], silent=False):
     saint = Saint()
     saint.select_course_section('교양필수')
 
-    def __get_whole_course(year, semester):
+    def __get_whole_course(year, semester, _line=line):
+
         saint.select_year(year)
         saint.select_semester(semester)
+        saint.select_line(_line)
         liberal_map = saint.get_liberal_arts_map()
         course_map = copy.deepcopy(liberal_map)
 
@@ -184,13 +215,15 @@ def _liberal_arts(year_range=[], semesters=[], silent=False):
     return ret
 
 
-def _major(year_range=[], semesters=[], silent=False):
+def _major(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False):
     """
     전공 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
     :type year_range: list or tuple
     :param semesters:
     :type semesters: list or tuple
+    :param line:
+    :type line: int
     :return:
     {
         '2017': {
@@ -261,13 +294,13 @@ def _major(year_range=[], semesters=[], silent=False):
         }
     }
     """
-
     ret = {year: {} for year in year_range}
     saint = Saint()
 
-    def __get_whole_course(year, semester):
+    def __get_whole_course(year, semester, _line=line):
         saint.select_year(year)
         saint.select_semester(semester)
+        saint.select_line(_line)
         major_map = saint.get_major_map()
         course_map = copy.deepcopy(major_map)
 
@@ -298,11 +331,12 @@ def _major(year_range=[], semesters=[], silent=False):
     return ret
 
 
-def _selective_liberal(year_range=[], semesters=[], silent=False):
+def _selective_liberal(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False):
     """
     교양선택 과목들을 학기 단위로 묶어서 반환한다.
     :param year_range:
     :param semesters:
+    :param line:
     :return: dict
     {
         2017: {
@@ -392,9 +426,10 @@ def _selective_liberal(year_range=[], semesters=[], silent=False):
     saint.select_year('2017')
     saint.select_semester('2 학기')
 
-    def __get_whole_course(year, semester):
+    def __get_whole_course(year, semester, _line=line):
         saint.select_year(year)
         saint.select_semester(semester)
+        saint.select_line(_line)
         selective_map = saint.get_selective_liberal_map()
         course_map = {course_name: {} for course_name in selective_map}
 

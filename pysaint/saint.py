@@ -28,6 +28,7 @@ class Saint:
         self.college_key = get_college_key(self.soup_jar['base'])
         self.faculty_key = get_faculty_key(self.soup_jar['base'])
         self.major_key = get_major_key(self.soup_jar['base'])
+        self.line_key = get_line_key(self.soup_jar['base'])
         self.search_id = get_search_id(self.soup_jar['base'])
 
     def login(self, j_username, j_password):
@@ -334,6 +335,20 @@ class Saint:
         :return:
         """
         return self._select_selective_liberal_course(course_name)
+
+    def select_line(self, line):
+        """
+        줄수/페이지 수를 바꾼다
+        :param line:
+        Line.TEN, Line.TWENTY, Line.FIFTY, ...
+        :return:
+        """
+        if not Line.has_value(line):
+            raise ValueError("select_line() got wrong arguments line: {}\n"
+                             "line should be one of {}".format(line, Line.list()))
+
+        dt_combo_select = sap_event_queue.combo_select(self.line_key, line, self.sap_wd_secure_id)
+        after_line_click = self.sess.post(ECC_URL + self.action, data=dt_combo_select)
 
     def get_liberal_arts_map(self):
         """
