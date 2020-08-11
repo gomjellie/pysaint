@@ -173,10 +173,12 @@ def get_major_key(soup_base):
     major_key = major.get('id')
     return major_key
 
+
 def get_line_key(soup_base):
     line = soup_base.find('input', {"lsdata": re.compile(r"9:'100'")})
     line_key = line.get('id')
     return line_key
+
 
 def get_liberal_arts_skey(soup_grade, course_name):
     """
@@ -244,25 +246,20 @@ def parse_subjects(search_soup):
     return subjects
 
 
-def get_liberal_arts_courses(grade_soup):
+def get_liberal_arts_courses(liberal_arts_soup):
     """
-    :param grade_soup:
-    SoupParser.soup_jar['grade']
+    :param liberal_arts_soup:
+    SoupParser.soup_jar['교양필수']
     :return:
+    ["컴퓨팅적사고", "기업가정신과", ...]
     """
-    content = grade_soup.find('content')
 
-    first_div = content.find('div')
-    siblings = first_div.find_next_siblings()
-    if len(siblings) == 1:
-        liberal_div = first_div.find_next_siblings()[0]
-        divs = liberal_div.find_all('div', {'class': 'lsListbox__value'})
-        liberals = []
-        for div in divs:
-            liberals.append(div.text)
-        return liberals
-    else:
-        raise Exception()
+    lecture_dropdown = liberal_arts_soup.find_all('div', {'style': 'height:10em;overflow-y:scroll;'})[1]
+    ret = []
+
+    for i in lecture_dropdown.find_all('div', {'class': 'lsListbox__value'}):
+        ret.append(i.get_text().strip())
+    return ret
 
 
 def get_colleges(semester_soup):
@@ -399,6 +396,7 @@ def get_grade_id_from_liberal_arts_tab(liberal_arts_soup):
     """
     # tr = liberal_arts_soup.find('tr', text=grade)
     # return tr.get('id')
+    print(liberal_arts_soup)
     return liberal_arts_soup.find('span', text='과목 수준').label.get('f')
 
 

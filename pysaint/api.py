@@ -189,17 +189,12 @@ def _liberal_arts(year_range=[], semesters=[], line=int(Line.FIVE_HUNDRED), sile
         saint.select_semester(semester)
         saint.select_line(_line)
         liberal_map = saint.get_liberal_arts_map()
-        course_map = copy.deepcopy(liberal_map)
-
-        for grade in liberal_map:
-            course_map[grade] = {course_name: {} for course_name in liberal_map[grade]}
+        course_map = {name: [] for name in liberal_map}
 
         pbar = tqdm(liberal_map, disable=silent)
-        for grade in pbar:
-            pbar.set_description("Processing {:8s}".format(grade))
-            for course_name in liberal_map[grade]:
-                if course_name != '':
-                    course_map[grade][course_name] = saint.select_on_liberal_arts(grade, course_name)
+        for course_name in pbar:
+            pbar.set_description("Processing {:8s}".format(course_name))
+            course_map[course_name] = saint.select_on_liberal_arts(course_name)
 
         return course_map
 
