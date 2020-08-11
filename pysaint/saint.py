@@ -300,9 +300,9 @@ class Saint:
         :return:
         """
 
-        search_id = get_search_id(self.soup_jar['grade'])
-        course_key = get_liberal_arts_key(self.soup_jar['grade'])
-        course_skey = get_liberal_arts_skey(self.soup_jar['grade'], course_name)
+        search_id = get_search_id(self.soup_jar['교양필수'])
+        course_key = get_liberal_arts_key(self.soup_jar['교양필수'])
+        course_skey = get_liberal_arts_skey(self.soup_jar['교양필수'], course_name)
         dt_combo_with_search_button_press \
             = sap_event_queue.combo_select_with_button_press(course_key, course_skey, search_id, self.sap_wd_secure_id)
         on_liberal_arts_search_click = self.sess.post(ECC_URL + self.action, data=dt_combo_with_search_button_press)
@@ -310,16 +310,15 @@ class Saint:
 
         return parse_subjects(self.soup_jar['liberal_search'])
 
-    def select_on_liberal_arts(self, grade, course_name):
+    def select_on_liberal_arts(self, course_name):
         """
-        :param grade:
         :param course_name:
         :return:
         subject lists
         """
 
-        self._select_grade(grade)
-        courses = get_liberal_arts_courses(self.soup_jar['grade'])
+        # self._select_grade(grade)
+        courses = get_liberal_arts_courses(self.soup_jar['교양필수'])
         if course_name not in courses:
             raise Exception()
 
@@ -358,22 +357,15 @@ class Saint:
         CourseParser.select_year()
         CourseParser.select_semester()
         :return:
-        {
-            '전체학년': ['CHAPEL'],
-            '1학년': ['숭실인의인성과소양', '현대인과성서', '현대인과성서세미나', ...],
-            ...
-        }
+        [
+
+        ]
         """
 
-        grades = ['전체학년', '1학년', '2학년', '3학년', '4학년', '5학년']
-        liberal_arts_map = {grade: {} for grade in grades}
         self.select_course_section('교양필수')
-        for grade in grades:
-            self._select_grade(grade)
-            liberals = get_liberal_arts_courses(self.soup_jar['grade'])
-            liberal_arts_map[grade] = liberals
+        liberals = get_liberal_arts_courses(self.soup_jar['교양필수'])
 
-        return liberal_arts_map
+        return liberals
 
     def get_major_map(self):
         """
