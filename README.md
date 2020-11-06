@@ -2,6 +2,8 @@
 
 [saint.ssu.ac.kr](https://saint.ssu.ac.kr) 에서 수강신청 과목정보를 실시간으로 가져오는 라이브러리 입니다.
 
+최신버전은 20.11.7 입니다. (연도.월.일 순으로 버전을 표기합니다.)
+
 ## setup (for end user)
 ```sh
 pip install pysaint
@@ -14,7 +16,9 @@ pip install pysaint
 ```python
 import pysaint
 
-res = pysaint.get('전공', '2018', '2 학기', silent=True)
+res = pysaint.get('전공', '2020', '2 학기', silent=True)
+
+pysaint.save_json('./json/', '{}-{}-전공'.format('2020', '2 학기'), res)
 
 res = pysaint.get('교양필수', range(2015, 2017), ('1 학기', '여름학기', '2 학기', '겨울학기'))
 

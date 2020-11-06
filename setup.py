@@ -3,7 +3,7 @@ import os
 
 
 ROOT = os.path.abspath(os.path.dirname(__file__))
-VERSION = '20.8.12'
+VERSION = '20.11.7'
 
 
 def get_requirements(filename):
