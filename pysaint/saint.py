@@ -63,7 +63,7 @@ class Saint:
         self.soup_jar['login_soup'] = BeautifulSoup(login_get.text, 'lxml')
 
         user_name = get_login_user_name(self.soup_jar['login_soup'])
-        if user_name is 'fail':
+        if user_name == 'fail':
             print("failed to login")
         else:
             print("log in success! user_name: {}".format(user_name))
