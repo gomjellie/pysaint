@@ -413,3 +413,47 @@ def get_grade_skey_from_liberal_arts_tab(liberal_arts_soup, grade):
     lsdata_dict = ast.literal_eval(lsdata)
     return lsdata_dict[0]
 
+def get_close_key(soupGrade1_1):
+    """
+    :param soup_jar[grade1_1] (lxml)
+    
+    Message:
+    1. 성적입력 기간(2020.12.08 ~ 2020.12.29) 중에는 강의 평가에 응답한 과목의 성적만 조회하실 수 있습니다.
+    2. ...
+    ...
+    [닫기] 클릭하기 위해서 필요한 키를 얻음
+    lsdata="{0:'Close',4:'Close'}"인 키를 얻는다
+
+    """
+    div = soupGrade1_1.find('div', {'lsdata': "{0:'닫기',4:'닫기'}"})
+
+    if div:
+        return div.get('id')
+    
+    div = soupGrade1_1.find('div', {'lsdata': "{0:'close',4:'close'}"})
+    return div.get('id')
+
+def get_year_key_from_grade(soupGrade2):
+    """
+
+    """
+    return soupGrade2.find('span', {'title': '학년도'}).get('f')
+
+def get_semester_key_from_grade(soupGrade2):
+    """
+    """
+    return soupGrade2.find('span', {'title': '학기'}).get('f')
+
+def get_year_skey_from_grade(soupGrade2, year):
+    """
+    """
+    component = soupGrade2.find('div', text='{}년도'.format(year))
+    return component.get('data-itemkey')
+
+def get_semester_skey_from_grade(soupGrade2, semester):
+    """
+    :param semester: one of ["1&#x20;학기", "여름학기", "2&#x20;학기", "겨울학기"]
+    """
+    component = soupGrade2.find('div', text=semester)
+    return component.get('data-itemkey')
+

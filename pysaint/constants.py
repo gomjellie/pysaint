@@ -21,20 +21,21 @@ REQUEST_HEADERS = {
 }
 
 SESSION_HEADERS = {
-    'Accept': '*/*',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9',
     'Accept-Encoding': 'gzip, deflate, br',
     'Accept-Language': 'ko-KR,ko;q=0.9,en-US;q=0.8,en;q=0.7',
     'Cache-Control': 'max-age=0',
     'Connection': 'keep-alive',
     'Content-Type': 'application/x-www-form-urlencoded',
     'DNT': '1',
-    'Host': 'saint.ssu.ac.kr',
+    'Host': 'ecc.ssu.ac.kr',
     'Origin': 'https://saint.ssu.ac.kr',
     'Referer': 'https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/zcmw2100?sap-language=KO',
     'Sec-Fetch-Dest': 'empty',
     'Sec-Fetch-Mode': 'cors',
     'Sec-Fetch-Site': 'same-origin',
     'X-Requested-With': 'XMLHttpRequest',
+    'Upgrade-Insecure-Requests': '1',
     'X-XHR-Logon': 'accept',
     'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) " +
                   "AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.183 Safari/537.36",
