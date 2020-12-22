@@ -83,18 +83,20 @@ class Saint:
         # self.sess.cookies.set_cookie(
         #     requests.cookies.create_cookie(domain='.ssu.ac.kr', name='SAPWP_active', value='1')
         # )
-        sugang = self.sess.get('https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017?sap-language=KO')
-        soup = BeautifulSoup(sugang.text, 'html.parser')
+        grade1 = self.sess.get('https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017?sap-language=KO')
+        soup = BeautifulSoup(grade1.text, 'html.parser')
         form = soup.find('form', {'name': 'sap.client.SsrClient.form'})
         action = form.get('action')
         
         dt = {
             'sap-charset': 'utf-8',
             'sap-wd-secure-id': self.sap_wd_secure_id,
-            'SAPEVENTQUEUE': "ClientInspector_Notify~E002Id~E004WD01~E005Data~E004ClientWidth~003A1470px~003BClientHeight~003A946px~003BScreenWidth~003A1920px~003BScreenHeight~003A1080px~003BScreenOrientation~003Alandscape~003BThemedTableRowHeight~003A21px~003BThemedFormLayoutRowHeight~003A25px~003BDeviceType~003ADESKTOP~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E003~E002~E003~E001Custom_ClientInfos~E002Id~E004WD01~E005WindowOpenerExists~E004false~E005ClientURL~E004https~003A~002F~002Fecc.ssu.ac.kr~002Fsap~002Fbc~002Fwebdynpro~002Fsap~002FZCMB3W0017~0023~E005ClientWidth~E0041470~E005ClientHeight~E004946~E005DocumentDomain~E004ssu.ac.kr~E005IsTopWindow~E004true~E005ParentAccessible~E004true~E003~E002ClientAction~E004enqueue~E005ResponseData~E004delta~E003~E002~E003~E001LoadingPlaceHolder_Load~E002Id~E004_loadingPlaceholder_~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+            'SAPEVENTQUEUE': "ClientInspector_Notify~E002Id~E004WD01~E005Data~E004ClientWidth~003A1419px~003BClientHeight~003A961px~003BScreenWidth~003A1920px~003BScreenHeight~003A1080px~003BScreenOrientation~003Alandscape~003BThemedTableRowHeight~003A21px~003BThemedFormLayoutRowHeight~003A25px~003BDeviceType~003ADESKTOP~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E003~E002~E003~E001Custom_ClientInfos~E002Id~E004WD01~E005WindowOpenerExists~E004false~E005ClientURL~E004https~003A~002F~002Fecc.ssu.ac.kr~002Fsap~002Fbc~002Fwebdynpro~002Fsap~002FZCMB3W0017~0023~E005ClientWidth~E0041419~E005ClientHeight~E004961~E005DocumentDomain~E004ssu.ac.kr~E005IsTopWindow~E004true~E005ParentAccessible~E004true~E003~E002ClientAction~E004enqueue~E005ResponseData~E004delta~E003~E002~E003~E001LoadingPlaceHolder_Load~E002Id~E004_loadingPlaceholder_~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         }
+        # print(ECC_URL + action, dt)
         grade1_1 = self.sess.post(ECC_URL + action, data=dt)
         self.soup_jar['grade1_1'] = BeautifulSoup(grade1_1.text, 'lxml')
+        print('grade1_1:', grade1_1.status_code)
 
         input_tag = soup.find('input', {'id': '_popup_url_'})
         lsdata = input_tag.get('lsdata')
@@ -104,28 +106,27 @@ class Saint:
         update_popup = '/sap/bc/webdynpro/sap/{}&sap-wd-popupWindowID={}'.format(evaluated, WDWL1)
         grade1_2 = self.sess.get(ECC_URL + update_popup,
             headers={
-                'DNT': '1',
-                'Referer': 'https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017',
-                'sec-ch-ua': '"Google Chrome";v="87", " Not;A Brand";v="99", "Chromium";v="87"',
-                'sec-ch-ua-mobile': '?0',
-                'Upgrade-Insecure-Requests': '1',
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+                'Accept-Encoding': 'gzip, deflate, br',
+                'Host': 'ecc.ssu.ac.kr',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15',
+                'Authorization': 'Basic MjAxNTAzMTg6c29vbmdzaWxAUzE=',
+                'Accept-Language': 'en-us',
+                'Connection': 'keep-alive',
             }
         )
+        print('grade1_2: ', grade1_2.status_code)
         print(ECC_URL + update_popup)
         self.soup_jar['grade1_2'] = BeautifulSoup(grade1_2.text, 'html.parser')
-        
+
         close_key = get_close_key(self.soup_jar['grade1_1'])
-        print(close_key)
         close_event = sap_event_queue.button_press(close_key, self.sap_wd_secure_id)
         print(ECC_URL + action)
         print(close_event)
 
-        # print(self.sess.cookies)
         grade2 = self.sess.post(ECC_URL + action, data=close_event)
-        print(grade2.status_code, grade2._content)
-        # print(self.sess.headers)
-        print(grade2, grade2.text) # 여기서 출력값이 이상함
+        print('grade2: ', grade2.status_code)
+        print(grade2.text) # 여기서 출력값이 이상함
         self.soup_jar['grade2'] = BeautifulSoup(grade2.text, 'lxml')
 
         year_key = get_year_key_from_grade(self.soup_jar['grade2'])

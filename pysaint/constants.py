@@ -1,5 +1,5 @@
 SOURCE_URL = "https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/zcmw2100?sap-language=KO"
-ECC_URL = "https://ecc.ssu.ac.kr"
+ECC_URL = "http://ecc.ssu.ac.kr"
 SAINT_URL = "https://saint.ssu.ac.kr"
 PORTAL_URL = "https://saint.ssu.ac.kr/irj/portal"
 POPUP_URL = "https://saint.ssu.ac.kr/ssu_logon/jsp/popupCheck.jsp"
@@ -44,7 +44,8 @@ SESSION_HEADERS = {
 SESSION_HEADERS_GRADE = {
     'Accept': '*/*',
     'Accept-Encoding': 'gzip, deflate, br',
-    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept-Language': 'ko-KR',
+    'Authorization': 'Basic MjAxNTAzMTg6c29vbmdzaWxAUzE=',
     'Cache-Control': 'max-age=0',
     'Connection': 'keep-alive',
     'Content-Type': 'application/x-www-form-urlencoded',
@@ -52,36 +53,19 @@ SESSION_HEADERS_GRADE = {
     'Host': 'ecc.ssu.ac.kr',
     'Origin': 'https://ecc.ssu.ac.kr',
     'Referer': 'https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017',
-    'sec-ch-ua': '"Google Chrome";v="87", " Not;A Brand";v="99", "Chromium";v="87"',
-    'sec-ch-ua-mobile': '?0',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-origin',
+    # 'sec-ch-ua': '"Google Chrome";v="87", " Not;A Brand";v="99", "Chromium";v="87"',
+    # 'sec-ch-ua-mobile': '?0',
+    # 'Sec-Fetch-Dest': 'empty',
+    # 'Sec-Fetch-Mode': 'cors',
+    # 'Sec-Fetch-Site': 'same-origin',
     'X-Requested-With': 'XMLHttpRequest',
-    'Upgrade-Insecure-Requests': '1',
+    # 'Upgrade-Insecure-Requests': '1',
     'X-XHR-Logon': 'accept',
-    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
+    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15",
 }
 
-SESSION_HEADERS_GRADE_NO_UPGRADE_INSECURE = {
-    'Accept': '*/*',
-    'Accept-Encoding': 'gzip, deflate, br',
-    'Accept-Language': 'en-US,en;q=0.9',
-    # 'Cache-Control': 'max-age=0',
-    'Connection': 'keep-alive',
-    'Content-Type': 'application/x-www-form-urlencoded',
-    'DNT': '1',
-    'Host': 'ecc.ssu.ac.kr',
-    'Origin': 'https://ecc.ssu.ac.kr',
-    'Referer': 'https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017',
-    'sec-ch-ua': '"Google Chrome";v="87", " Not;A Brand";v="99", "Chromium";v="87"',
-    'sec-ch-ua-mobile': '?0',
-    'Sec-Fetch-Dest': 'empty',
-    'Sec-Fetch-Mode': 'cors',
-    'Sec-Fetch-Site': 'same-origin',
-    'X-Requested-With': 'XMLHttpRequest',
-    'X-XHR-Logon': 'accept',
-    'User-Agent': "Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36",
+GRADE_POST_HEADERS = {
+
 }
 
 class Line:
