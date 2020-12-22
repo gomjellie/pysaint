@@ -79,10 +79,11 @@ class Saint:
         element has ['과목ID', '과목명', '이수년도', '이수학기', '학점수', '성적기호', '학술연구상태', '제외사유', '신청구분', '신청일', '승인취소일', '신청', '취소'])
         keys
         """
-        self.sess.cookies.update({'SAPWP_active': '1'})
-        sugang = self.sess.get('https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017')
-        # print("https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017")
-        # print(sugang.text)
+        self.sess.headers = SESSION_HEADERS_GRADE
+        # self.sess.cookies.set_cookie(
+        #     requests.cookies.create_cookie(domain='.ssu.ac.kr', name='SAPWP_active', value='1')
+        # )
+        sugang = self.sess.get('https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017?sap-language=KO')
         soup = BeautifulSoup(sugang.text, 'html.parser')
         form = soup.find('form', {'name': 'sap.client.SsrClient.form'})
         action = form.get('action')
@@ -100,17 +101,31 @@ class Saint:
         evaluated = ast.literal_eval(lsdata)[2] # ZCMB3W0017?sap-language=KO&sap-cache-buster=3B7119B0FB0A57CEFF4E4831F642E559&sap-theme=&dvc=standards&version=20151128-043535&%7eLOADING_TEMPLATE=POPUP_PAGE
         WDWL1 = self.soup_jar['grade1_1'].find_all('full-update')[1].get('windowid')
         
-        update_popup = '/sap/bc/webdynpro/sap/{}&sap-wd-popupWindowId={}'.format(evaluated, WDWL1)
-
-        grade1_2 = self.sess.get(ECC_URL + update_popup)
-        self.soup_jar['grade1_2'] = BeautifulSoup(grade1_2.text, 'lxml')
+        update_popup = '/sap/bc/webdynpro/sap/{}&sap-wd-popupWindowID={}'.format(evaluated, WDWL1)
+        grade1_2 = self.sess.get(ECC_URL + update_popup,
+            headers={
+                'DNT': '1',
+                'Referer': 'https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017',
+                'sec-ch-ua': '"Google Chrome";v="87", " Not;A Brand";v="99", "Chromium";v="87"',
+                'sec-ch-ua-mobile': '?0',
+                'Upgrade-Insecure-Requests': '1',
+                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 11_1_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.88 Safari/537.36',
+            }
+        )
+        print(ECC_URL + update_popup)
+        self.soup_jar['grade1_2'] = BeautifulSoup(grade1_2.text, 'html.parser')
         
         close_key = get_close_key(self.soup_jar['grade1_1'])
         print(close_key)
         close_event = sap_event_queue.button_press(close_key, self.sap_wd_secure_id)
+        print(ECC_URL + action)
+        print(close_event)
 
+        # print(self.sess.cookies)
         grade2 = self.sess.post(ECC_URL + action, data=close_event)
-        print(grade2.text)
+        print(grade2.status_code, grade2._content)
+        # print(self.sess.headers)
+        print(grade2, grade2.text) # 여기서 출력값이 이상함
         self.soup_jar['grade2'] = BeautifulSoup(grade2.text, 'lxml')
 
         year_key = get_year_key_from_grade(self.soup_jar['grade2'])
