@@ -50,7 +50,7 @@ def parse_grade_card(grade_table_soup):
     keys
 
     """
-    tbody = grade_table_soup.find('tbody', {'id': 'WD15-contentTBody'})
+    tbody = grade_table_soup.find('tbody', {'id': re.compile('WD0...-contentTBody')})
     th = tbody.find_all('th')
     tr = tbody.find_all('tr')
 
