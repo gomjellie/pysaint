@@ -83,7 +83,7 @@ class Saint:
         # self.sess.cookies.set_cookie(
         #     requests.cookies.create_cookie(domain='.ssu.ac.kr', name='SAPWP_active', value='1')
         # )
-        grade1 = self.sess.get('https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017?sap-language=KO')
+        grade1 = self.sess.get('https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017?sap-language=KO', headers=GRADE_GET_HEADERS)
         soup = BeautifulSoup(grade1.text, 'html.parser')
         form = soup.find('form', {'name': 'sap.client.SsrClient.form'})
         action = form.get('action')
@@ -94,7 +94,7 @@ class Saint:
             'SAPEVENTQUEUE': "ClientInspector_Notify~E002Id~E004WD01~E005Data~E004ClientWidth~003A1419px~003BClientHeight~003A961px~003BScreenWidth~003A1920px~003BScreenHeight~003A1080px~003BScreenOrientation~003Alandscape~003BThemedTableRowHeight~003A21px~003BThemedFormLayoutRowHeight~003A25px~003BDeviceType~003ADESKTOP~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E003~E002~E003~E001Custom_ClientInfos~E002Id~E004WD01~E005WindowOpenerExists~E004false~E005ClientURL~E004https~003A~002F~002Fecc.ssu.ac.kr~002Fsap~002Fbc~002Fwebdynpro~002Fsap~002FZCMB3W0017~0023~E005ClientWidth~E0041419~E005ClientHeight~E004961~E005DocumentDomain~E004ssu.ac.kr~E005IsTopWindow~E004true~E005ParentAccessible~E004true~E003~E002ClientAction~E004enqueue~E005ResponseData~E004delta~E003~E002~E003~E001LoadingPlaceHolder_Load~E002Id~E004_loadingPlaceholder_~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         }
         # print(ECC_URL + action, dt)
-        grade1_1 = self.sess.post(ECC_URL + action, data=dt)
+        grade1_1 = self.sess.post(ECC_URL + action, data=dt, headers=GRADE_POST_HEADERS)
         self.soup_jar['grade1_1'] = BeautifulSoup(grade1_1.text, 'lxml')
         print('grade1_1:', grade1_1.status_code)
 
@@ -104,17 +104,7 @@ class Saint:
         WDWL1 = self.soup_jar['grade1_1'].find_all('full-update')[1].get('windowid')
         
         update_popup = '/sap/bc/webdynpro/sap/{}&sap-wd-popupWindowID={}'.format(evaluated, WDWL1)
-        grade1_2 = self.sess.get(ECC_URL + update_popup,
-            headers={
-                'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
-                'Accept-Encoding': 'gzip, deflate, br',
-                'Host': 'ecc.ssu.ac.kr',
-                'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15',
-                'Authorization': 'Basic MjAxNTAzMTg6c29vbmdzaWxAUzE=',
-                'Accept-Language': 'en-us',
-                'Connection': 'keep-alive',
-            }
-        )
+        grade1_2 = self.sess.get(ECC_URL + update_popup, headers=GRADE_GET_HEADERS)
         print('grade1_2: ', grade1_2.status_code)
         print(ECC_URL + update_popup)
         self.soup_jar['grade1_2'] = BeautifulSoup(grade1_2.text, 'html.parser')
@@ -124,7 +114,7 @@ class Saint:
         print(ECC_URL + action)
         print(close_event)
 
-        grade2 = self.sess.post(ECC_URL + action, data=close_event)
+        grade2 = self.sess.post(ECC_URL + action, data=close_event, headers=GRADE_POST_HEADERS)
         print('grade2: ', grade2.status_code)
         print(grade2.text) # 여기서 출력값이 이상함
         self.soup_jar['grade2'] = BeautifulSoup(grade2.text, 'lxml')
@@ -135,9 +125,9 @@ class Saint:
         semester_skey = get_semester_skey_from_grade(self.soup_jar['grade2'], semester)
         
         year_select_event = sap_event_queue.combo_select(year_key, year_skey, self.sap_wd_secure_id)
-        self.sess.post(ECC_URL + action, data=year_select_event)
+        self.sess.post(ECC_URL + action, data=year_select_event, headers=GRADE_POST_HEADERS)
         semester_select_event = sap_event_queue.combo_select(semester_key, semester_skey, self.sap_wd_secure_id)
-        table = self.sess.post(ECC_URL + action, data=semester_select_event)
+        table = self.sess.post(ECC_URL + action, data=semester_select_event, headers=GRADE_POST_HEADERS)
         print(table.text)
 
         # grade_card = parse_grade_card(self.soup_jar['grade_table'])

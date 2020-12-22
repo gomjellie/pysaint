@@ -65,9 +65,30 @@ SESSION_HEADERS_GRADE = {
 }
 
 GRADE_POST_HEADERS = {
-
+    'Content-Type': 'application/x-www-form-urlencoded',
+    'Accept': '*/*',
+    'Authorization': 'Basic MjAxNTAzMTg6c29vbmdzaWxAUzE=',
+    'Accept-Language': 'en-us',
+    'Accept-Encoding': 'gzip, deflate, br',
+    # 'Host': 'ecc.ssu.ac.kr',
+    'Origin': 'https://ecc.ssu.ac.kr',
+    # 'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15',
+    # 'Referer': 'https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017?sap-language=KO',
+    'Connection': 'keep-alive',
+    # 'Cookie': 'MYSAPSSO2=AjQxMDIBABgAMgAwADEANQAwADMAMQA4ACAAIAAgACACAAYAMQAwADADABAAUwBTAFAAIAAgACAAIAAgBAAYADIAMAAyADAAMQAyADIAMgAxADUAMQA1BQAEAAAACAYAAgBYCQACADP%2fAPQwgfEGCSqGSIb3DQEHAqCB4zCB4AIBATELMAkGBSsOAwIaBQAwCwYJKoZIhvcNAQcBMYHAMIG9AgEBMBMwDjEMMAoGA1UEAxMDU1NQAgEAMAkGBSsOAwIaBQCgXTAYBgkqhkiG9w0BCQMxCwYJKoZIhvcNAQcBMBwGCSqGSIb3DQEJBTEPFw0yMDEyMjIxNTE1MTNaMCMGCSqGSIb3DQEJBDEWBBQsOLWeWwq81ipvgaPBUTwCvChdhjAJBgcqhkjOOAQDBC4wLAIUG3uCGqmTxlHaUG9EQCuC%216FzYTUCFCuDoWZDWf%21kYhK0vhkt7%2fQKV%2fqh; SAP_SESSIONID_SSP_100=NjiqVlEYVhYHcxmFSWhu4n1WbkJEaBHroXhpNxfuS6c%3d; SAPWP_active=1; sap-usercontext=sap-language=KO&sap-client=100',
+    # 'X-Requested-With': 'XMLHttpRequest',
+    # 'X-XHR-Logon': 'accept',
 }
 
+GRADE_GET_HEADERS = {
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Host': 'ecc.ssu.ac.kr',
+    'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_6) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.0.2 Safari/605.1.15',
+    # 'Authorization': 'Basic MjAxNTAzMTg6c29vbmdzaWxAUzE=',
+    'Accept-Language': 'en-us',
+    'Connection': 'keep-alive'
+}
 class Line:
     TEN = 10
     TWENTY = 20
