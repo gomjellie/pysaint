@@ -437,17 +437,17 @@ def get_year_key_from_grade(soupGrade2):
     """
 
     """
-    return soupGrade2.find('span', {'title': '학년도'}).get('f')
+    return soupGrade2.find('label', {'title': '학년도'}).get('f')
 
 def get_semester_key_from_grade(soupGrade2):
     """
     """
-    return soupGrade2.find('span', {'title': '학기'}).get('f')
+    return soupGrade2.find('label', {'title': '학기'}).get('f')
 
 def get_year_skey_from_grade(soupGrade2, year):
     """
     """
-    component = soupGrade2.find('div', text='{}년도'.format(year))
+    component = soupGrade2.find('div', text='{}학년도'.format(year))
     return component.get('data-itemkey')
 
 def get_semester_skey_from_grade(soupGrade2, semester):

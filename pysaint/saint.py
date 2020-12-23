@@ -19,7 +19,7 @@ class Saint:
 
         form = self.soup_jar['init'].find('form', {'name': 'sap.client.SsrClient.form'})
         self.action = form.get('action')
-        res_base = self.sess.post(ECC_URL + self.action)
+        res_base = self.sess.post("http://ecc.ssu.ac.kr" + self.action)
 
         self.soup_jar['base'] = BeautifulSoup(res_base.text, 'lxml')
 
@@ -69,7 +69,7 @@ class Saint:
         else:
             print("log in success! user_name: {}".format(user_name))
 
-    def get_grade(self, year=2020, semester='2 학기'):
+    def get_grade(self, year='2020', semester='2 학기'):
         """
         ! login required !
 
@@ -79,56 +79,68 @@ class Saint:
         element has ['과목ID', '과목명', '이수년도', '이수학기', '학점수', '성적기호', '학술연구상태', '제외사유', '신청구분', '신청일', '승인취소일', '신청', '취소'])
         keys
         """
-        self.sess.headers = SESSION_HEADERS_GRADE
-        # self.sess.cookies.set_cookie(
-        #     requests.cookies.create_cookie(domain='.ssu.ac.kr', name='SAPWP_active', value='1')
-        # )
-        grade1 = self.sess.get('https://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017?sap-language=KO', headers=GRADE_GET_HEADERS)
+        self.sess.headers = GRADE_HEADERS
+        self.sess.cookies.set_cookie(
+            requests.cookies.create_cookie(domain='.ssu.ac.kr', name='SAPWP_active', value='1')
+        )
+        grade1 = self.sess.get('http://ecc.ssu.ac.kr/sap/bc/webdynpro/sap/ZCMB3W0017?sap-language=KO#', headers=GRADE_GET_HEADERS)
+        print('grade1: ', grade1.status_code, grade1.headers)
         soup = BeautifulSoup(grade1.text, 'html.parser')
         form = soup.find('form', {'name': 'sap.client.SsrClient.form'})
         action = form.get('action')
+        # MYSAPSSO2 = self.sess.cookies.get('MYSAPSSO2')
+        # SAP_SESSIONID_SSP_100 = self.sess.cookies.get('SAP_SESSIONID_SSP_100')
+        # self.sess.cookies.set_cookie(
+        #     requests.cookies.create_cookie('MYSAPSS02', MYSAPSSO2, domain='.ssu.ac.kr', secure=False)
+        # )
+        # self.sess.cookies.set_cookie(
+        #     requests.cookies.create_cookie('SAP_SESSIONID_SSP_100', SAP_SESSIONID_SSP_100, domain='ecc.ssu.ac.kr', secure=False)
+        # )
+        # print(self.sess.cookies.values)
+        # print("self.sess.cookies.get('MYSAPSSO2')", self.sess.cookies.get('MYSAPSSO2'))
         
         dt = {
             'sap-charset': 'utf-8',
             'sap-wd-secure-id': self.sap_wd_secure_id,
-            'SAPEVENTQUEUE': "ClientInspector_Notify~E002Id~E004WD01~E005Data~E004ClientWidth~003A1419px~003BClientHeight~003A961px~003BScreenWidth~003A1920px~003BScreenHeight~003A1080px~003BScreenOrientation~003Alandscape~003BThemedTableRowHeight~003A21px~003BThemedFormLayoutRowHeight~003A25px~003BDeviceType~003ADESKTOP~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E003~E002~E003~E001Custom_ClientInfos~E002Id~E004WD01~E005WindowOpenerExists~E004false~E005ClientURL~E004https~003A~002F~002Fecc.ssu.ac.kr~002Fsap~002Fbc~002Fwebdynpro~002Fsap~002FZCMB3W0017~0023~E005ClientWidth~E0041419~E005ClientHeight~E004961~E005DocumentDomain~E004ssu.ac.kr~E005IsTopWindow~E004true~E005ParentAccessible~E004true~E003~E002ClientAction~E004enqueue~E005ResponseData~E004delta~E003~E002~E003~E001LoadingPlaceHolder_Load~E002Id~E004_loadingPlaceholder_~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
+            'SAPEVENTQUEUE': "ClientInspector_Notify~E002Id~E004WD01~E005Data~E004ClientWidth~003A1419px~003BClientHeight~003A961px~003BScreenWidth~003A1920px~003BScreenHeight~003A1080px~003BScreenOrientation~003Alandscape~003BThemedTableRowHeight~003A21px~003BThemedFormLayoutRowHeight~003A25px~003BDeviceType~003ADESKTOP~E003~E002ResponseData~E004delta~E005EnqueueCardinality~E004single~E003~E002~E003~E001Custom_ClientInfos~E002Id~E004WD01~E005WindowOpenerExists~E004false~E005ClientURL~E004http~003A~002F~002Fecc.ssu.ac.kr~002Fsap~002Fbc~002Fwebdynpro~002Fsap~002FZCMB3W0017~0023~E005ClientWidth~E0041419~E005ClientHeight~E004961~E005DocumentDomain~E004ssu.ac.kr~E005IsTopWindow~E004true~E005ParentAccessible~E004true~E003~E002ClientAction~E004enqueue~E005ResponseData~E004delta~E003~E002~E003~E001LoadingPlaceHolder_Load~E002Id~E004_loadingPlaceholder_~E003~E002ResponseData~E004delta~E005ClientAction~E004submit~E003~E002~E003"
         }
         # print(ECC_URL + action, dt)
         grade1_1 = self.sess.post(ECC_URL + action, data=dt, headers=GRADE_POST_HEADERS)
         self.soup_jar['grade1_1'] = BeautifulSoup(grade1_1.text, 'lxml')
-        print('grade1_1:', grade1_1.status_code)
+        print('grade1_1:', grade1_1.status_code, grade1_1.headers)
 
-        input_tag = soup.find('input', {'id': '_popup_url_'})
-        lsdata = input_tag.get('lsdata')
-        evaluated = ast.literal_eval(lsdata)[2] # ZCMB3W0017?sap-language=KO&sap-cache-buster=3B7119B0FB0A57CEFF4E4831F642E559&sap-theme=&dvc=standards&version=20151128-043535&%7eLOADING_TEMPLATE=POPUP_PAGE
-        WDWL1 = self.soup_jar['grade1_1'].find_all('full-update')[1].get('windowid')
+        # input_tag = soup.find('input', {'id': '_popup_url_'})
+        # lsdata = input_tag.get('lsdata')
+        # evaluated = ast.literal_eval(lsdata)[2] # ZCMB3W0017?sap-language=KO&sap-cache-buster=3B7119B0FB0A57CEFF4E4831F642E559&sap-theme=&dvc=standards&version=20151128-043535&%7eLOADING_TEMPLATE=POPUP_PAGE
+        # WDWL1 = self.soup_jar['grade1_1'].find_all('full-update')[1].get('windowid')
+
+        # update_popup = '/sap/bc/webdynpro/sap/{}&sap-wd-popupWindowID={}'.format(evaluated, WDWL1)
+        # grade1_2 = self.sess.get(ECC_URL + update_popup, headers=GRADE_GET_HEADERS)
+        # print('grade1_2: ', grade1_2.status_code, grade1_2.headers)
+        # self.soup_jar['grade1_2'] = BeautifulSoup(grade1_2.text, 'html.parser')
+        # close_key = get_close_key(self.soup_jar['grade1_1'])
+        # close_event = sap_event_queue.button_press(close_key, self.sap_wd_secure_id)
+        # print(close_key)
+
+        # grade2 = self.sess.post(ECC_URL + action, data=close_event, headers=GRADE_POST_HEADERS)
+        # print('grade2: ', grade2.status_code, grade2.headers)
+        # print(grade2.text) # 여기서 출력값이 이상함
+        # self.soup_jar['grade2'] = BeautifulSoup(grade2.text, 'lxml')
+
+        year_key = get_year_key_from_grade(self.soup_jar['grade1_1'])
+        year_skey = get_year_skey_from_grade(self.soup_jar['grade1_1'], year)
+        semester_key = get_semester_key_from_grade(self.soup_jar['grade1_1'])
+        semester_skey = get_semester_skey_from_grade(self.soup_jar['grade1_1'], semester)
         
-        update_popup = '/sap/bc/webdynpro/sap/{}&sap-wd-popupWindowID={}'.format(evaluated, WDWL1)
-        grade1_2 = self.sess.get(ECC_URL + update_popup, headers=GRADE_GET_HEADERS)
-        print('grade1_2: ', grade1_2.status_code)
-        print(ECC_URL + update_popup)
-        self.soup_jar['grade1_2'] = BeautifulSoup(grade1_2.text, 'html.parser')
-
-        close_key = get_close_key(self.soup_jar['grade1_1'])
-        close_event = sap_event_queue.button_press(close_key, self.sap_wd_secure_id)
-        print(ECC_URL + action)
-        print(close_event)
-
-        grade2 = self.sess.post(ECC_URL + action, data=close_event, headers=GRADE_POST_HEADERS)
-        print('grade2: ', grade2.status_code)
-        print(grade2.text) # 여기서 출력값이 이상함
-        self.soup_jar['grade2'] = BeautifulSoup(grade2.text, 'lxml')
-
-        year_key = get_year_key_from_grade(self.soup_jar['grade2'])
-        year_skey = get_year_skey_from_grade(self.soup_jar['grade2'], year)
-        semester_key = get_semester_key_from_grade(self.soup_jar['grade2'])
-        semester_skey = get_semester_skey_from_grade(self.soup_jar['grade2'], semester)
-        
+        print('year_key: {}, year_skey: {}, semester_key: {}, semester_skey: {}'.format(
+            year_key, year_skey, semester_key, semester_skey
+        ))
         year_select_event = sap_event_queue.combo_select(year_key, year_skey, self.sap_wd_secure_id)
-        self.sess.post(ECC_URL + action, data=year_select_event, headers=GRADE_POST_HEADERS)
+        grade3 = self.sess.post(ECC_URL + action, data=year_select_event, headers=GRADE_POST_HEADERS)
+        print('grade3: ', grade3.status_code, grade3.text)
         semester_select_event = sap_event_queue.combo_select(semester_key, semester_skey, self.sap_wd_secure_id)
-        table = self.sess.post(ECC_URL + action, data=semester_select_event, headers=GRADE_POST_HEADERS)
-        print(table.text)
+        grade4 = self.sess.post(ECC_URL + action, data=semester_select_event, headers=GRADE_POST_HEADERS)
+        print('grade4: ', grade4.status_code, grade4.text)
 
         # grade_card = parse_grade_card(self.soup_jar['grade_table'])
         return
