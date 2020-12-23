@@ -88,6 +88,7 @@ class Saint:
         soup = BeautifulSoup(grade1.text, 'html.parser')
         form = soup.find('form', {'name': 'sap.client.SsrClient.form'})
         action = form.get('action')
+        self.sap_wd_secure_id = get_sap_wd_secure_id(soup)
         # MYSAPSSO2 = self.sess.cookies.get('MYSAPSSO2')
         # SAP_SESSIONID_SSP_100 = self.sess.cookies.get('SAP_SESSIONID_SSP_100')
         # self.sess.cookies.set_cookie(
