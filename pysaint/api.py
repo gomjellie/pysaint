@@ -38,6 +38,7 @@ def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
             '연계전공'
             '교양선택'
             '교직'
+            '채플'
     :param year_range:
     :type year_range: list or tuple or range or str or int
     example )
@@ -751,6 +752,26 @@ def _chapel(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False):
     {
         2021: {
             '1 학기': {
+                "교수와함께하는채플": [
+                    {
+                        "계획": " ",
+                        "이수구분(주전공)": "채플",
+                        "이수구분(다전공)": " ",
+                        "공학인증": " ",
+                        "교과영역": "채플과목",
+                        "과목번호": "2150051501",
+                        "과목명": "교수와함께하는채플",
+                        "분반": " ",
+                        "교수명": "강아람",
+                        "개설학과": "학원선교팀",
+                        "시간/학점(설계)": "1.00 /0.5",
+                        "수강인원": "0",
+                        "여석": "15",
+                        "강의시간(강의실)": "화 15:00-15:50 (진리관 11111-강아람)",
+                        "수강대상": "전체"
+                    }
+                ],
+                "CHAPEL": []
             }
         },
         year: {
