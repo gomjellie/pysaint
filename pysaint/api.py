@@ -8,7 +8,7 @@ from .constants import Line
 from .saint import Saint
 import copy
 from tqdm import tqdm
-
+from datetime import datetime
 
 def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
     """
@@ -87,8 +87,9 @@ def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
                          "line should be one of {}".format(line, Line.list()))
 
     reformed_year_range = []
+    current_year = datetime.now().year
     for year in year_range:
-        if 2000 < int(year) < 2021:
+        if 2000 < int(year) <= current_year:
             pass
         else:
             raise ValueError("get() got wrong arguments year_range: {}\n"
