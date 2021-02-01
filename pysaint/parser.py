@@ -113,6 +113,15 @@ def get_fusion_major_key(fusion_major_soup):
     label = fusion_major_soup.find('label', text='융합전공')
     return label.get('f')
 
+def get_chapel_key(chapel_soup):
+    """
+    :param chapel_soup:
+    Saint.soup_jar['채플']
+    :return:
+    """
+    label = chapel_soup.find('label', text='과목명')
+    return label.get('f')
+
 def get_liberal_arts_key(soup_grade):
     """
     :param soup_grade:
@@ -168,6 +177,12 @@ def get_related_major_skey(related_major_soup, course_name):
 
 def get_fusion_major_skey(fusion_major_soup, course_name):
     course_div = fusion_major_soup.find('div', text=course_name)
+    course_yaml = course_div.get('lsdata')
+    course_skey = ast.literal_eval(course_yaml)[0]
+    return course_skey
+
+def get_chapel_skey(chapel_soup, course_name):
+    course_div = chapel_soup.find('div', text=course_name)
     course_yaml = course_div.get('lsdata')
     course_skey = ast.literal_eval(course_yaml)[0]
     return course_skey
@@ -314,6 +329,21 @@ def get_fusion_major_courses(fusion_major_soup):
     """
 
     lecture_dropdown = fusion_major_soup.find_all('div', {'style': 'height:10em;overflow-y:scroll;'})[1]
+    ret = []
+
+    for i in lecture_dropdown.find_all('div', {'class': 'lsListbox__value'}):
+        ret.append(i.get_text().strip())
+    return ret
+
+def get_chapel_courses(chapel_soup):
+    """
+    :param chapel_soup:
+    SoupParser.soup_jar['채플']
+    :return:
+    ["CHAPEL", ...]
+    """
+
+    lecture_dropdown = chapel_soup.find_all('div', {'style': 'height:10em;'})[1]
     ret = []
 
     for i in lecture_dropdown.find_all('div', {'class': 'lsListbox__value'}):

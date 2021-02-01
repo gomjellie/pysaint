@@ -331,6 +331,25 @@ class Saint:
 
         return parse_subjects(self.soup_jar['fusion_major_search'])
 
+    def _select_chapel(self, course_name):
+        """
+        채플에서 과목을 선택하고 검색 버튼을 누른다.
+        선행작업:
+        CourseParser.select_course_section('채플')
+        :param course_name:
+        :return:
+        """
+
+        course_id = get_chapel_key(self.soup_jar['채플'])
+        course_skey = get_chapel_skey(self.soup_jar['채플'], course_name)
+        search_id = get_search_id(self.soup_jar['채플'])
+        dt_combo_with_search_button_press \
+            = sap_event_queue.combo_select_with_button_press(course_id, course_skey, search_id, self.sap_wd_secure_id)
+        on_selective_liberal_course = self.sess.post(ECC_URL + self.action, data=dt_combo_with_search_button_press)
+        self.soup_jar['chapel_search'] = BeautifulSoup(on_selective_liberal_course.text, 'lxml')
+
+        return parse_subjects(self.soup_jar['chapel_search'])
+
     def _select_teaching(self):
         """
         교직에서 검색 버튼을 누른다.
@@ -421,6 +440,16 @@ class Saint:
         :return:
         """
         return self._select_teaching()
+    
+    def select_on_chapel(self, course_name):
+        """
+        채플에서 과목을 선택해서 검색 정보를 얻는다
+        선행작업:
+        CourseParser.select_course_section('채플')
+        :param course_name:
+        :return:
+        """
+        return self._select_chapel(course_name)
 
     def select_line(self, line):
         """
@@ -539,6 +568,23 @@ class Saint:
         courses = get_fusion_major_courses(self.soup_jar['융합전공'])
 
         return courses
+
+    def get_chapel_map(self):
+        """
+        :TODO :
+        CourseParser.select_course_section('채플') 을 처음 실행해서 얻게된
+        self.soup_jar['채플'] 에 과목정보가 있는경우가 있고 없는경우가 있다.
+        과목정보가 변경되면 과목정보가 생기고 그대로면 안생기는듯
+        교양선택 맵을 얻는다.
+        선행되야하는 작업:
+        :return:
+        """
+
+        self.select_course_section('채플')
+        courses = get_chapel_courses(self.soup_jar['채플'])
+
+        return courses
+
 if __name__ == '__main__':
     course_parser = Saint()
     course_parser.select_year('2017')
