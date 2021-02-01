@@ -30,6 +30,8 @@ res = pysaint.get('연계전공', '2018', '2 학기', line=200, silent=True)
 
 res = pysaint.get('융합전공', '2018', '2 학기', line=200, silent=True)
 
+res = pysaint.get('교직', '2018', '2 학기', line=200, silent=True)
+
 # freeze as json file format
 pysaint.save_json('./json/', '{}-{}-전공'.format('2016', '1 학기'), res)
 

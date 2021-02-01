@@ -37,6 +37,7 @@ def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
             '전공'
             '연계전공'
             '교양선택'
+            '교직'
     :param year_range:
     :type year_range: list or tuple or range or str or int
     example )
@@ -669,6 +670,25 @@ def _teaching(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False)
     {
         2021: {
             '1 학기': {
+                "교직": [
+                    {
+                        "계획": " ",
+                        "이수구분(주전공)": "교직",
+                        "이수구분(다전공)": " ",
+                        "공학인증": " ",
+                        "교과영역": "교직이론영역",
+                        "과목번호": "5011868701",
+                        "과목명": "교육과정(실시간화상강의) (온라인)",
+                        "분반": " ",
+                        "교수명": "조호제",
+                        "개설학과": "교직팀",
+                        "시간/학점(설계)": "2.00 /2.0 (0 )",
+                        "수강인원": "0",
+                        "여석": "30",
+                        "강의시간(강의실)": "금 18:00-19:50 (-조호제)",
+                        "수강대상": "전체"
+                    }
+                ]
             }
         },
         year: {
