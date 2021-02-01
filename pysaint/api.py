@@ -107,6 +107,8 @@ def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
         return _related_major(year_range=reformed_year_range, semesters=semesters, line=line, **kwargs)
     elif course_type == '융합전공':
         return _fusion_major(year_range=reformed_year_range, semesters=semesters, line=line, **kwargs)
+    elif course_type == '교직':
+        return _teaching(year_range=reformed_year_range, semesters=semesters, line=line, **kwargs)
     else:
         raise ValueError("get() got wrong arguments course_type: {} \n"
                          "expected to get '교양필수', '전공', '교양선택'".format(course_type))
@@ -642,6 +644,66 @@ def _fusion_major(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=Fa
             pbar.set_description("Processing {:8s}".format(course_name))
             if course_name != '':
                 course_map[course_name] = saint.select_on_fusion_major(course_name)
+
+        return course_map
+
+    year_bar = tqdm(year_range, disable=silent)
+    for year in year_bar:
+        year_bar.set_description("Year: {:4s}".format(year))
+        semester_bar = tqdm(semesters, disable=silent)
+        for semester in semester_bar:
+            semester_bar.set_description("semester: {:6s}".format(semester))
+            course_bunch = __get_whole_course(year, semester)
+            ret[year][semester] = course_bunch
+
+    return ret
+
+def _teaching(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False):
+    """
+    교직 과목들을 학기 단위로 묶어서 반환한다.
+    :param year_range:
+    :param semesters:
+    :param line:
+    :return: dict
+
+    {
+        2021: {
+            '1 학기': {
+            }
+        },
+        year: {
+            'semester': {
+                'section': [
+                    {
+                        dict_keys(['계획', '이수구분(주전공)', '이수구분(다전공)',
+                        '공학인증', '교과영역', '과목번호', '과목명', '분반', '교수명',
+                        '개설학과', '시간/학점(설계)', '수강인원', '여석', '강의시간(강의실)', '수강대상'])
+                    }
+                ]
+            }
+        }
+    }
+    """
+    ret = {year: {} for year in year_range}
+    saint = Saint()
+    saint.select_course_section('교직')
+
+    # is this necessary job?
+    saint.select_year('2017')
+    saint.select_semester('2 학기')
+
+    def __get_whole_course(year, semester, _line=line):
+        saint.select_year(year)
+        saint.select_semester(semester)
+        saint.select_line(_line)
+        teaching_map = ['교직']
+        course_map = {course_name: {} for course_name in teaching_map}
+
+        pbar = tqdm(teaching_map, disable=silent)
+        for course_name in pbar:
+            pbar.set_description("Processing {:8s}".format(course_name))
+            if course_name != '':
+                course_map[course_name] = saint.select_on_teaching()
 
         return course_map
 
