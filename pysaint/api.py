@@ -35,6 +35,7 @@ def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
     example )
             '교양필수'
             '전공'
+            '연계전공'
             '교양선택'
     :param year_range:
     :type year_range: list or tuple or range or str or int
