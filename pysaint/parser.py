@@ -95,6 +95,15 @@ def get_skey(elem):
         raise Exception("Unexpected elem type {}".format(type(elem)))
 
 
+def get_related_major_key(related_major_soup):
+    """
+    :param related_major_soup:
+    Saint.soup_jar['연계전공']
+    :return:
+    """
+    label = related_major_soup.find('label', text='연계전공')
+    return label.get('f')
+
 def get_liberal_arts_key(soup_grade):
     """
     :param soup_grade:
@@ -142,6 +151,11 @@ def get_selective_course_skey(selective_soup, course_name):
     course_skey = ast.literal_eval(course_yaml)[0]
     return course_skey
 
+def get_related_major_skey(related_major_soup, course_name):
+    course_div = related_major_soup.find('div', text=course_name)
+    course_yaml = course_div.get('lsdata')
+    course_skey = ast.literal_eval(course_yaml)[0]
+    return course_skey
 
 def get_semester_skey(soup_base, semester):
     if semester in ['1 학기', '여름학기', '2 학기', '겨울학기']:
@@ -261,6 +275,20 @@ def get_liberal_arts_courses(liberal_arts_soup):
         ret.append(i.get_text().strip())
     return ret
 
+def get_related_major_courses(related_major_soup):
+    """
+    :param related_major_soup:
+    SoupParser.soup_jar['연계전공']
+    :return:
+    ["일본어경제국제통상연계전공", ...]
+    """
+
+    lecture_dropdown = related_major_soup.find_all('div', {'style': 'height:10em;'})[1]
+    ret = []
+
+    for i in lecture_dropdown.find_all('div', {'class': 'lsListbox__value'}):
+        ret.append(i.get_text().strip())
+    return ret
 
 def get_colleges(semester_soup):
     """
