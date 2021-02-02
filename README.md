@@ -9,6 +9,11 @@
 pip install pysaint
 ```
 
+## setup (for library developer)
+```sh
+pip install .
+```
+
 ## Usage
 
 ### get course data
@@ -16,27 +21,30 @@ pip install pysaint
 ```python
 import pysaint
 
-res = pysaint.get('전공', '2020', '2 학기', silent=True)
+res = pysaint.get('전공', '2021', '1 학기', silent=True)
 
 pysaint.save_json('./json/', '{}-{}-전공'.format('2020', '2 학기'), res)
 
-res = pysaint.get('교양필수', range(2015, 2017), ('1 학기', '여름학기', '2 학기', '겨울학기'))
+res = pysaint.get('교양필수', range(2019, 2020), ('1 학기', '여름학기', '2 학기', '겨울학기'))
 
 res = pysaint.get('교양선택', (2016, ), ('1 학기', ), silent=False)
 
-res = pysaint.get('전공', '2018', '2 학기', line=200, silent=True)
+res = pysaint.get('전공', '2021', '2 학기', line=200, silent=True)
 
-res = pysaint.get('연계전공', '2018', '2 학기', line=200, silent=True)
+res = pysaint.get('연계전공', '2021', '1 학기', line=200, silent=True)
 
-res = pysaint.get('융합전공', '2018', '2 학기', line=200, silent=True)
+res = pysaint.get('융합전공', '2021', '1 학기', line=200, silent=False)
 
-res = pysaint.get('교직', '2018', '2 학기', line=200, silent=True)
+res = pysaint.get('교직', '2021', '1 학기', line=200, silent=True)
 
-res = pysaint.get('채플', '2018', '2 학기', line=200, silent=True)
+res = pysaint.get('채플', '2021', '1 학기', line=200, silent=True)
 
 # freeze as json file format
 pysaint.save_json('./json/', '{}-{}-전공'.format('2016', '1 학기'), res)
 
+# print result
+import pprint
+pprint.pprint(res)
 
 ```
 
