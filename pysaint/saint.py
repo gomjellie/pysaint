@@ -331,6 +331,23 @@ class Saint:
 
         return parse_subjects(self.soup_jar['fusion_major_search'])
 
+    def _select_teaching(self):
+        """
+        교직에서 검색 버튼을 누른다.
+        선행작업:
+        CourseParser.select_course_section('교직')
+        :param course_name:
+        :return:
+        """
+
+        search_id = get_search_id(self.soup_jar['교직'])
+        dt_search_button_press \
+            = sap_event_queue.button_press(search_id, self.sap_wd_secure_id)
+        on_selective_liberal_course = self.sess.post(ECC_URL + self.action, data=dt_search_button_press)
+        self.soup_jar['teaching_search'] = BeautifulSoup(on_selective_liberal_course.text, 'lxml')
+
+        return parse_subjects(self.soup_jar['teaching_search'])
+
     def _select_liberal_arts(self, course_name):
         """
         선행작업:
@@ -395,6 +412,15 @@ class Saint:
         :return:
         """
         return self._select_fusion_major(course_name)
+
+    def select_on_teaching(self):
+        """
+        교직에서 과목을 선택해서 검색 정보를 얻는다
+        선행작업:
+        CourseParser.select_course_section('교직')
+        :return:
+        """
+        return self._select_teaching()
 
     def select_line(self, line):
         """
