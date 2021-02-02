@@ -105,6 +105,8 @@ def get(course_type, year_range, semesters, line=Line.FIVE_HUNDRED, **kwargs):
         return _selective_liberal(year_range=reformed_year_range, semesters=semesters, line=line, **kwargs)
     elif course_type == '연계전공':
         return _related_major(year_range=reformed_year_range, semesters=semesters, line=line, **kwargs)
+    elif course_type == '융합전공':
+        return _fusion_major(year_range=reformed_year_range, semesters=semesters, line=line, **kwargs)
     else:
         raise ValueError("get() got wrong arguments course_type: {} \n"
                          "expected to get '교양필수', '전공', '교양선택'".format(course_type))
@@ -523,6 +525,123 @@ def _related_major(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=F
             pbar.set_description("Processing {:8s}".format(course_name))
             if course_name != '':
                 course_map[course_name] = saint.select_on_related_major(course_name)
+
+        return course_map
+
+    year_bar = tqdm(year_range, disable=silent)
+    for year in year_bar:
+        year_bar.set_description("Year: {:4s}".format(year))
+        semester_bar = tqdm(semesters, disable=silent)
+        for semester in semester_bar:
+            semester_bar.set_description("semester: {:6s}".format(semester))
+            course_bunch = __get_whole_course(year, semester)
+            ret[year][semester] = course_bunch
+
+    return ret
+
+def _fusion_major(year_range=[], semesters=[], line=Line.FIVE_HUNDRED, silent=False):
+    """
+    융합전공 과목들을 학기 단위로 묶어서 반환한다.
+    :param year_range:
+    :param semesters:
+    :param line:
+    :return: dict
+
+    {
+        2021: {
+            '1 학기': {
+                "빅데이터융합": [
+                    {
+                        "계획": " ",
+                        "이수구분(주전공)": "전필-소프트",
+                        "이수구분(다전공)": "복필-소프트/융선-빅데이터융합",
+                        "공학인증": "공학주제-소프트공인증/인필-소프트공인증",
+                        "교과영역": " ",
+                        "과목번호": "2150013201",
+                        "과목명": "데이터베이스(실시간화상+사전녹화강의) (온라인) ( 가반 )",
+                        "분반": " ",
+                        "교수명": " ",
+                        "개설학과": "소프트웨어학부",
+                        "시간/학점(설계)": "3.00 /3.0",
+                        "수강인원": "0",
+                        "여석": "40",
+                        "강의시간(강의실)": "월 15:00-16:15 (-)",
+                        "수강대상": "3학년 소프트,빅데이터융합"
+                    }
+                ]
+                빅데이터컴퓨팅융합: []
+                스마트소재/제품융합: []
+                스마트이동체융합: []
+                양자나노융합: []
+                에너지공학융합: []
+                통일외교및개발협력융합: []
+                스마트자동차융합: []
+                정보보호융합: []
+                ICT유통물류융합: []
+                문화서비스산업융합: []
+                스포츠마케팅융합: []
+                사물인터넷시스템융합: []
+                과학철학융합: []
+                인간및사회통섭융합: []
+                헬스케어빅데이터융합: []
+                디자인플래닝융합: []
+                사회적기업과사회혁신융합: []
+                스포츠매니지먼트융합: []
+                IT스타트업엑셀러레이터융합: []
+                AI로봇융합: []
+                뉴미디어콘텐츠융합: []
+                문화콘텐츠비즈니스융합: [],
+                주거복지도시행정융합: [],
+                메카트로닉스공학융합: [],
+                프레임/사회이슈기획융합: [],
+                사회공동체혁신융합: [],
+                네러티브디지털아트융합: [],
+                사회분석데이터마케팅융합: [],
+                패션미디어마케팅융합: [],
+                국제도시계획⋅행정융합: [],
+                토탈디자인브랜딩융합: [],
+                AI-인지언어융합: [],
+                뉴미디어마케팅융합: [],
+                동아시아경제통상융합: [
+                AI모빌리티융합: [],
+                스마트안전보건환경융합: [],
+                데이터마케팅융합: [],
+                지속가능디자인융합: []
+            }
+        },
+        year: {
+            'semester': {
+                'section': [
+                    {
+                        dict_keys(['계획', '이수구분(주전공)', '이수구분(다전공)',
+                        '공학인증', '교과영역', '과목번호', '과목명', '분반', '교수명',
+                        '개설학과', '시간/학점(설계)', '수강인원', '여석', '강의시간(강의실)', '수강대상'])
+                    }
+                ]
+            }
+        }
+    }
+    """
+    ret = {year: {} for year in year_range}
+    saint = Saint()
+    saint.select_course_section('융합전공')
+
+    # is this necessary job?
+    saint.select_year('2017')
+    saint.select_semester('2 학기')
+
+    def __get_whole_course(year, semester, _line=line):
+        saint.select_year(year)
+        saint.select_semester(semester)
+        saint.select_line(_line)
+        fusion_major_map = saint.get_fusion_major_map()
+        course_map = {course_name: {} for course_name in fusion_major_map}
+
+        pbar = tqdm(fusion_major_map, disable=silent)
+        for course_name in pbar:
+            pbar.set_description("Processing {:8s}".format(course_name))
+            if course_name != '':
+                course_map[course_name] = saint.select_on_fusion_major(course_name)
 
         return course_map
 
