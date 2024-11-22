@@ -1,3 +1,12 @@
+# ❗️deprecated
+
+대체 라이브러리로 rusaint 사용을 추천합니다.
+- https://github.com/EATSTEAK/rusaint
+
+동작 방법이 궁금하다면 아래 블로그 내용을 참고해보세요. (pysaint를 수정해서 사용하고 싶은 경우)
+- https://eatsteak.dev/post/examining-ssu-u-saint/
+- https://eatsteak.dev/post/u-saint-the-hard-parts/
+
 # pysaint
 
 [saint.ssu.ac.kr](https://saint.ssu.ac.kr) 에서 수강신청 과목정보를 실시간으로 가져오는 라이브러리 입니다.
